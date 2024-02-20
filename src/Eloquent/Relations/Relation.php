@@ -1,8 +1,8 @@
 <?php
 
-namespace WaxFramework\Database\Eloquent\Relations;
+namespace WpMVC\Database\Eloquent\Relations;
 
-use WaxFramework\Database\Eloquent\Model;
+use WpMVC\Database\Eloquent\Model;
 
 abstract class Relation {
     public Model $related;

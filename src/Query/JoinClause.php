@@ -1,8 +1,8 @@
 <?php
 
-namespace WaxFramework\Database\Query;
+namespace WpMVC\Database\Query;
 
-use WaxFramework\Database\Eloquent\Model;
+use WpMVC\Database\Eloquent\Model;
 
 class JoinClause extends Builder {
     /**

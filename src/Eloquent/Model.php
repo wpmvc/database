@@ -1,13 +1,13 @@
 <?php
 
-namespace WaxFramework\Database\Eloquent;
+namespace WpMVC\Database\Eloquent;
 
-use WaxFramework\Database\Eloquent\Relations\BelongsToMany;
-use WaxFramework\Database\Eloquent\Relations\BelongsToOne;
-use WaxFramework\Database\Eloquent\Relations\HasMany;
-use WaxFramework\Database\Eloquent\Relations\HasOne;
-use WaxFramework\Database\Query\Builder;
-use WaxFramework\Database\Resolver;
+use WpMVC\Database\Eloquent\Relations\BelongsToMany;
+use WpMVC\Database\Eloquent\Relations\BelongsToOne;
+use WpMVC\Database\Eloquent\Relations\HasMany;
+use WpMVC\Database\Eloquent\Relations\HasOne;
+use WpMVC\Database\Query\Builder;
+use WpMVC\Database\Resolver;
 
 abstract class Model {
     abstract static function get_table_name():string;

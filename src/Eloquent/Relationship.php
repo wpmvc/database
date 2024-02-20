@@ -1,12 +1,12 @@
 <?php
 
-namespace WaxFramework\Database\Eloquent;
+namespace WpMVC\Database\Eloquent;
 
-use WaxFramework\Database\Eloquent\Relations\BelongsToMany;
-use WaxFramework\Database\Eloquent\Relations\BelongsToOne;
-use WaxFramework\Database\Eloquent\Relations\HasOne;
-use WaxFramework\Database\Eloquent\Relations\Relation;
-use WaxFramework\Database\Query\Builder;
+use WpMVC\Database\Eloquent\Relations\BelongsToMany;
+use WpMVC\Database\Eloquent\Relations\BelongsToOne;
+use WpMVC\Database\Eloquent\Relations\HasOne;
+use WpMVC\Database\Eloquent\Relations\Relation;
+use WpMVC\Database\Query\Builder;
 use wpdb;
 
 class Relationship {

@@ -1,14 +1,14 @@
 <?php
 
-namespace WaxFramework\Database\Query;
+namespace WpMVC\Database\Query;
 
 use DateTime;
 use InvalidArgumentException;
-use WaxFramework\Database\Eloquent\Model;
-use WaxFramework\Database\Eloquent\Relations\HasMany;
-use WaxFramework\Database\Eloquent\Relationship;
-use WaxFramework\Database\Query\Compilers\Compiler;
-use WaxFramework\Database\Eloquent\Relations\Relation;
+use WpMVC\Database\Eloquent\Model;
+use WpMVC\Database\Eloquent\Relations\HasMany;
+use WpMVC\Database\Eloquent\Relationship;
+use WpMVC\Database\Query\Compilers\Compiler;
+use WpMVC\Database\Eloquent\Relations\Relation;
 use wpdb;
 
 class Builder extends Relationship {
@@ -22,7 +22,7 @@ class Builder extends Relationship {
     /**
      * The model being queried.
      *
-     * @param \WaxFramework\Database\Eloquent\Model
+     * @param \WpMVC\Database\Eloquent\Model
      */
     public $model;
 

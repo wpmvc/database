@@ -1,14 +1,14 @@
 <p align="center">
-<a href="https://packagist.org/packages/waxframework/database"><img src="https://img.shields.io/packagist/dt/waxframework/database" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/waxframework/database"><img src="https://img.shields.io/packagist/v/waxframework/database" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/waxframework/database"><img src="https://img.shields.io/packagist/l/waxframework/database" alt="License"></a>
+<a href="https://packagist.org/packages/wpmvc/database"><img src="https://img.shields.io/packagist/dt/wpmvc/database" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/wpmvc/database"><img src="https://img.shields.io/packagist/v/wpmvc/database" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/wpmvc/database"><img src="https://img.shields.io/packagist/l/wpmvc/database" alt="License"></a>
 </p>
 
-# About WaxFramework Database
+# About WpMVC Database
 
-WaxFramework Database is a robust and versatile SQL query builder designed specifically for WordPress plugins. It provides a similar experience to Laravel's Eloquent Query Builder, a well-known and widely-used PHP framework.
+WpMVC Database is a robust and versatile SQL query builder designed specifically for WordPress plugins. It provides a similar experience to Laravel's Eloquent Query Builder, a well-known and widely-used PHP framework.
 
-- [About WaxFramework Database](#about-waxframework-database)
+- [About WpMVC Database](#about-wpmvc-database)
 - [Installation](#installation)
 - [Create Eloquent Model](#create-eloquent-model)
 - [Insert Data](#insert-data)
@@ -48,9 +48,9 @@ WaxFramework Database is a robust and versatile SQL query builder designed speci
 - [License](#license)
 
 # Installation
-To install the WaxFramework Database package, simply run the following command via Composer:
+To install the WpMVC Database package, simply run the following command via Composer:
 ```
-composer require waxframework/database
+composer require wpmvc/database
 ```
 
 # Create Eloquent Model
@@ -58,10 +58,10 @@ To create an Eloquent model, you can use the following code snippet.
 ```php
 <?php
 
-namespace WaxFramework\App\Models;
+namespace WpMVC\App\Models;
 
-use WaxFramework\Database\Eloquent\Model;
-use WaxFramework\Database\Resolver;
+use WpMVC\Database\Eloquent\Model;
+use WpMVC\Database\Resolver;
 
 class Post extends Model {
 
@@ -126,7 +126,7 @@ Post::query()->where('post_id', 100)->delete();
 ```
 
 # Read Data
-To retrieve data, the WaxFramework Database offers a variety of methods:
+To retrieve data, the WpMVC Database offers a variety of methods:
 Get all posts
 
 ## Aggregates
@@ -204,9 +204,9 @@ $users = User::query()
 This will return all the rows from the `posts` table along with their matching rows from the `users` table based on the `user_id` column. If a post has no matching user, the values from the `users` table will be NULL.
 
 ### Advanced Join Clauses
-You may also specify more advanced join clauses. To get started, pass a closure as the second argument to the `join` method. The closure will receive a `WaxFramework\Database\Query\JoinClause` instance which allows you to specify constraints on the "join" clause:
+You may also specify more advanced join clauses. To get started, pass a closure as the second argument to the `join` method. The closure will receive a `WpMVC\Database\Query\JoinClause` instance which allows you to specify constraints on the "join" clause:
 ```php
-use WaxFramework\Database\Query\JoinClause;
+use WpMVC\Database\Query\JoinClause;
 
 $posts = Post::query()->join('postmeta', function (JoinClause $join) {
 	$join->on('postmeta.post_id', '=', 'posts.ID')->orOn(/* ... */);
@@ -310,14 +310,14 @@ $posts = Post::query()->offset(10)->limit(5)->get();
 Database tables are often related to one another. For example, a blog post may have many comments or an order could be related to the user who placed it. Eloquent makes managing and working with these relationships easy, and supports a variety of common relationships:
 
 ## One To One
-A one-to-one relationship is a very basic type of database relationship. For example, a `User` model might be associated with one `Phone` model. To define this relationship, we will place a `Phone` method on the `User` model. The `Phone` method should call the `has_one` method and return its result. The `has_one` method is available to your model via the model's `WaxFramework\Database\Eloquent\Model` base class:
+A one-to-one relationship is a very basic type of database relationship. For example, a `User` model might be associated with one `Phone` model. To define this relationship, we will place a `Phone` method on the `User` model. The `Phone` method should call the `has_one` method and return its result. The `has_one` method is available to your model via the model's `WpMVC\Database\Eloquent\Model` base class:
 ```php
 <?php
 
-namespace WaxFramework\App\Models;
+namespace WpMVC\App\Models;
 
-use WaxFramework\Database\Eloquent\Model;
-use WaxFramework\Database\Eloquent\Relations\HasOne;
+use WpMVC\Database\Eloquent\Model;
+use WpMVC\Database\Eloquent\Relations\HasOne;
 
 class User extends Model {
 
@@ -343,10 +343,10 @@ A one-to-many relationship is used to define relationships where a single model 
 ```php
 <?php
 
-namespace WaxFramework\App\Models;
+namespace WpMVC\App\Models;
 
-use WaxFramework\Database\Eloquent\Model;
-use WaxFramework\Database\Eloquent\Relations\HasMany;
+use WpMVC\Database\Eloquent\Model;
+use WpMVC\Database\Eloquent\Relations\HasMany;
 
 class Post extends Model {
 
@@ -365,10 +365,10 @@ Now that we can access all of a post's meta, let's define a relationship to allo
 ```php
 <?php
 
-namespace WaxFramework\App\Models;
+namespace WpMVC\App\Models;
 
-use WaxFramework\Database\Eloquent\Model;
-use WaxFramework\Database\Eloquent\Relations\BelongsToOne;
+use WpMVC\Database\Eloquent\Model;
+use WpMVC\Database\Eloquent\Relations\BelongsToOne;
 
 class PostMeta extends Model {
 
@@ -385,7 +385,7 @@ class PostMeta extends Model {
 ## Constraining Query Loads
 Sometimes you may wish to a relationship but also specify additional query conditions for the relationship query. You can accomplish this by passing an array of relationships to the with method where the array key is a relationship name and the array value is a closure that adds additional constraints to the relationship query:
 ```php
-use WaxFramework\Database\Query\Builder;
+use WpMVC\Database\Query\Builder;
 
 $posts = Post::query()->with('meta', function(Builder $query) {
 	$query->where('meta_id', 672);
@@ -405,4 +405,4 @@ $posts = Post::query()->with([
 
 # License
 
-WaxFramework Database is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+WpMVC Database is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

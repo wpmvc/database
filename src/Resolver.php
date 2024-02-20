@@ -1,6 +1,6 @@
 <?php
 
-namespace WaxFramework\Database;
+namespace WpMVC\Database;
 
 use wpdb;
 

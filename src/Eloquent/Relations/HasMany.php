@@ -1,5 +1,5 @@
 <?php
 
-namespace WaxFramework\Database\Eloquent\Relations;
+namespace WpMVC\Database\Eloquent\Relations;
 
 class HasMany extends Relation { }

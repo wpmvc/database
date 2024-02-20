@@ -1,9 +1,9 @@
 <?php
 
-namespace WaxFramework\Database\Query\Compilers;
+namespace WpMVC\Database\Query\Compilers;
 
-use WaxFramework\Database\Query\Builder;
-use WaxFramework\Database\Query\JoinClause;
+use WpMVC\Database\Query\Builder;
+use WpMVC\Database\Query\JoinClause;
 
 class Compiler {
     /**

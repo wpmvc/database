@@ -1,8 +1,8 @@
 <?php
 
-namespace WaxFramework\Database\Eloquent\Relations;
+namespace WpMVC\Database\Eloquent\Relations;
 
-use WaxFramework\Database\Eloquent\Model;
+use WpMVC\Database\Eloquent\Model;
 
 class BelongsToMany extends Relation {
     public Model $pivot;

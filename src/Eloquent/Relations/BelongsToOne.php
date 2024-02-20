@@ -1,6 +1,6 @@
 <?php
 
-namespace WaxFramework\Database\Eloquent\Relations;
+namespace WpMVC\Database\Eloquent\Relations;
 
 class BelongsToOne extends Relation { 
     public $wheres = [];

@@ -12,6 +12,7 @@ use WpMVC\Database\Eloquent\Relationship;
 use WpMVC\Database\Query\Compilers\Compiler;
 use WpMVC\Database\Eloquent\Relations\Relation;
 use wpdb;
+use stdClass;
 
 class Builder extends Relationship {
      /**
@@ -843,6 +844,9 @@ class Builder extends Relationship {
         return $this->limit( $per_page )->offset( $offset )->get();
     }
     
+    /**
+     * @return stdClass|null
+     */
     public function first() {
         $data = $this->limit( 1 )->get();
         return isset( $data[0] ) ? $data[0] : null;

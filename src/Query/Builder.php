@@ -170,7 +170,7 @@ class Builder extends Relationship {
      * Set the relationships that should be eager loaded.
      *
      * @param  string|array  $relations
-     * @param  string|Closure|array|null $callback
+     * @param  string|(Closure(static): mixed)|array|null $callback
      * @return $this
      */
     public function with( $relations, $callback = null ) {
@@ -190,7 +190,7 @@ class Builder extends Relationship {
 
             foreach ( $items as $key ) {
                 if ( ! isset( $current[$key] ) ) {
-                    $query         = new self( $this->model );
+                    $query         = new static( $this->model );
                     $current[$key] = [
                         'query'    => $query,
                         'children' => []
@@ -211,8 +211,8 @@ class Builder extends Relationship {
     }
 
      /**
-     * @param  string|array $relations
-     * @param  string|Closure|array|null $callback
+     * @param  string $relations
+     * @param  (Closure(static): mixed)|null $callback
      * @return $this
      */
     public function with_count( $relations, $callback = null ) {
@@ -252,7 +252,7 @@ class Builder extends Relationship {
      * Add a join clause to the query.
      *
      * @param  string $table
-     * @param  Closure|array|string $first
+     * @param  (Closure(JoinClause): mixed)|array|string $first
      * @param  string|null  $operator
      * @param  string|null $second
      * @param  string $type
@@ -281,7 +281,7 @@ class Builder extends Relationship {
      * Add a left join to the query.
      *
      * @param  string  $table
-     * @param  Closure|array|string $first
+     * @param  (Closure(JoinClause): mixed)|array|string $first
      * @param  string|null $operator
      * @param  string|null $second
      * @param  bool $where
@@ -295,7 +295,7 @@ class Builder extends Relationship {
      * Add a right join to the query.
      *
      * @param  string $table
-     * @param  Closure|array|string $first
+     * @param  (Closure(JoinClause): mixed)|array|string $first
      * @param  string|null $operator
      * @param  string|null $second
      * @param  bool $where

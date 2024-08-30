@@ -120,10 +120,15 @@ class Compiler {
     protected function compile_components( Builder $query ) {
         $sql = [];
 
+        $clauses = $query->get_clauses();
+
         foreach ( $this->select_components as $component ) {
+            $method = 'compile_' . $component;
             if ( isset( $query->$component ) ) {
-                $method          = 'compile_' . $component;
                 $sql[$component] = $this->$method( $query, $query->$component );
+            } elseif ( isset( $clauses[$component] ) ) {
+                $sql[$component] = $this->$method( $query, $clauses[$component] );
+                
             }
         }
 
@@ -189,11 +194,11 @@ class Compiler {
      * @return string
      */
     public function compile_wheres( Builder $query ) {
-        if ( empty( $query->wheres ) ) {
+        if ( empty( $query->get_wheres() ) ) {
             return '';
         }
 
-        return $this->compile_where_or_having( $query, $query->wheres );
+        return $this->compile_where_or_having( $query, $query->get_wheres() );
     }
 
      /**
@@ -203,10 +208,10 @@ class Compiler {
      * @return string
      */
     public function compile_ons( JoinClause $query ) {
-        if ( empty( $query->ons ) ) {
+        if ( empty( $query->get_ons() ) ) {
             return '';
         }
-        return $this->compile_where_or_having( $query, $query->ons, 'on' );
+        return $this->compile_where_or_having( $query, $query->get_ons(), 'on' );
     }
 
     protected function compile_where_or_having( Builder $query, array $items, string $type = 'where' ) {
@@ -241,10 +246,10 @@ class Compiler {
                     break;
                 case 'exists':
                     /**
-                     * @var Builder $query
+                     * @var Builder $exists_query
                      */
-                    $query = $where['query'];
-                    $sql   = $query->to_sql();
+                    $exists_query = $where['query'];
+                    $sql          = $exists_query->to_sql();
 
                     $exists       = $where['not'] ? 'not exists' : 'exists';
                     $where_query .= " {$where['boolean']} {$exists} ({$sql})";
@@ -255,6 +260,30 @@ class Compiler {
                 case 'is_null':
                     $null         = $where['not'] ? "not null" : "null";
                     $where_query .= " {$where['boolean']} {$where['column']} is {$null}";
+                    break;
+                case 'nested':
+                    /**
+                     * @var Builder $nested_query
+                     */
+                    $nested_query = $where['query'];
+
+                    switch ( $type ) {
+                        case 'where':
+                            $nested_items = $nested_query->get_wheres();
+                            break;
+                        case 'having':
+                            $nested_items = $nested_query->get_havings();
+                            break;
+                        case 'on':
+                            $nested_items = $nested_query->get_ons();
+                            break;
+                    }
+
+                    if ( ! empty( $nested_items ) ) {
+                        $sql = ltrim( $this->compile_where_or_having( $nested_query, $nested_items, $type ), $type );
+                        $query->set_bindings( $nested_query->get_bindings() );
+                        $where_query .= " {$where['boolean']} ({$sql} )";
+                    }
             }
         }
 
@@ -272,7 +301,7 @@ class Compiler {
         return implode(
             ' ', array_map(
                 function( JoinClause $join ) {
-                    if ( ! empty( $join->columns ) || ! empty( $join->wheres ) ) {
+                    if ( ! empty( $join->columns ) || ! empty( $join->get_wheres() ) ) {
                         $query = "({$join->to_sql()})";
                     } else {
                         $query = $join->from;
@@ -317,10 +346,10 @@ class Compiler {
      * @return string
      */
     protected function compile_havings( Builder $query ) {
-        if ( empty( $query->havings ) ) {
+        if ( empty( $query->get_havings() ) ) {
             return '';
         }
-        return $this->compile_where_or_having( $query, $query->havings, 'having' );
+        return $this->compile_where_or_having( $query, $query->get_havings(), 'having' );
     }
 
     /**

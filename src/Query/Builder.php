@@ -11,16 +11,21 @@ use WpMVC\Database\Eloquent\Relations\HasMany;
 use WpMVC\Database\Eloquent\Relationship;
 use WpMVC\Database\Query\Compilers\Compiler;
 use WpMVC\Database\Eloquent\Relations\Relation;
+use WpMVC\Database\Clauses\WhereClause;
+use WpMVC\Database\Clauses\HavingClause;
 use wpdb;
 use stdClass;
 
 class Builder extends Relationship {
+
+    use WhereClause, HavingClause;
+
      /**
      * The current query value bindings.
      *
      * @var array
      */
-    public $bindings = [];
+    protected $bindings = [];
 
     /**
      * The model being queried.
@@ -84,20 +89,6 @@ class Builder extends Relationship {
      * @var int
      */
     public $limit;
-
-    /**
-     * The where constraints for the query.
-     *
-     * @var array
-     */
-    public $wheres = [];
-
-    /**
-     * The having constraints for the query.
-     *
-     * @var array
-     */
-    public $havings;
 
     /**
      * The orderings for the query.
@@ -315,348 +306,6 @@ class Builder extends Relationship {
     }
 
     /**
-     * Add a basic where clause to the query.
-     *
-     * @param  string  $column
-     * @param  mixed  $operator
-     * @param  mixed  $value
-     * @param  string  $boolean
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function where( $column, $operator = null, $value = null, $boolean = 'and', bool $return_data = false ) {
-
-        // Here we will make some assumptions about the operator. If only 2 values are
-        // passed to the method, we will assume that the operator is an equals sign
-        // and keep going. Otherwise, we'll require the operator to be passed in.
-        [$value, $operator] = $this->prepare_value_and_operator(
-            $value, $operator, func_num_args() === 2
-        );
-
-        // If the given operator is not found in the list of valid operators we will
-        // assume that the developer is just short-cutting the '=' operators and
-        // we will set the operators to '=' and set the values appropriately.
-        if ( $this->invalid_operator( $operator ) ) {
-            [$value, $operator] = [$operator, '='];
-        }
-
-        $type = 'basic';
-
-        // Now that we are working with just a simple query we can put the elements
-        // in our array and add the query binding to our array of bindings that
-        // will be bound to each SQL statements when it is finally executed.
-        $data = compact( 'type', 'boolean', 'column', 'operator', 'value' );
-
-        if ( $return_data ) {
-            return $data;
-        }
-
-        $this->wheres[] = $data;
-
-        return $this;
-    }
-
-     /**
-     * Add an "or where" clause to the query.
-     *
-     * @param  Closure|array|string|array  $column
-     * @param  mixed  $operator
-     * @param  mixed  $value
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function or_where( $column, $operator = null, $value = null, bool $return_data = false ) {
-        [$value, $operator] = $this->prepare_value_and_operator(
-            $value, $operator, func_num_args() === 2
-        );
-
-        return $this->where( $column, $operator, $value, 'or', $return_data );
-    }
-
-     /**
-     * Add a "where" clause comparing two columns to the query.
-     * 
-     * @param  string  $column
-     * @param  mixed  $operator
-     * @param  mixed  $value
-     * @param  string  $boolean
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function where_column( $column, $operator = null, $value = null, $boolean = 'and', bool $return_data = false ) {
-        // Here we will make some assumptions about the operator. If only 2 values are
-        // passed to the method, we will assume that the operator is an equals sign
-        // and keep going. Otherwise, we'll require the operator to be passed in.
-        [$value, $operator] = $this->prepare_value_and_operator(
-            $value, $operator, func_num_args() === 2
-        );
-
-        // If the given operator is not found in the list of valid operators we will
-        // assume that the developer is just short-cutting the '=' operators and
-        // we will set the operators to '=' and set the values appropriately.
-        if ( $this->invalid_operator( $operator ) ) {
-            [$value, $operator] = [$operator, '='];
-        }
-
-        $type = 'column';
-
-        // Now that we are working with just a simple query we can put the elements
-        // in our array and add the query binding to our array of bindings that
-        // will be bound to each SQL statements when it is finally executed.
-        $data = compact( 'type', 'boolean', 'column', 'operator', 'value' );
-
-        if ( $return_data ) {
-            return $data;
-        }
-
-        $this->wheres[] = $data;
-        return $this;
-    }
-
-    /**
-     * Add a or "where" clause comparing two columns to the query.
-     * 
-     * @param  string  $column
-     * @param  mixed  $operator
-     * @param  mixed  $value
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function or_where_column( $column, $operator = null, $value = null, bool $return_data = false ) {
-        return $this->where_column( $column, $operator, $value, 'or', $return_data );
-    }
-
-    /**
-     * Add an exists clause to the query.
-     *
-     * @param  Closure|array|static  $callback
-     * @param  string  $boolean
-     * @param  bool  $not
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function where_exists( $callback, $boolean = 'and', $not = false, bool $return_data = false ) {
-        if ( is_callable( $callback ) ) {
-            $query = new static( $this->model );
-            call_user_func( $callback, $query );
-        } else {
-            $query = $callback;
-        }
-
-        $type = 'exists';
-
-        $data = compact( 'type', 'query', 'boolean', 'not' );
-
-        if ( $return_data ) {
-            return $data;
-        }
-
-        $this->wheres[] = $data;
-
-        return $this;
-    }
-
-     /**
-     * Add a where not exists clause to the query.
-     *
-     * @param  Closure|array|static  $callback
-     * @param  string  $boolean
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function where_not_exists( $callback, $boolean = 'and', bool $return_data = false ) {
-        return $this->where_exists( $callback, $boolean, true, $return_data );
-    }
-
-     /**
-     * Add a "where in" clause to the query.
-     *
-     * @param  string  $column
-     * @param  array  $values
-     * @param  string  $boolean
-     * @param  bool  $not
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function where_in( string $column, array $values, $boolean = 'and', $not = false, bool $return_data = false ) {
-        $type = 'in';
-
-        $data = compact( 'type', 'column', 'values', 'boolean', 'not' );
-
-        if ( $return_data ) {
-            return $data;
-        }
-
-        $this->wheres[] = $data;
-
-        return $this;
-    }
-
-     /**
-     * Add a or "where in" clause to the query.
-     *
-     * @param  string  $column
-     * @param  array  $values
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function or_where_in( $column, $values, bool $return_data = false ) {
-        return $this->where_in( $column, $values, 'or', false, $return_data );
-    }
-
-    /**
-     * Add a "where not in" clause to the query.
-     *
-     * @param  string  $column
-     * @param  array  $values
-     * @param  string  $boolean
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function where_not_in( $column, $values, $boolean = 'and', bool $return_data = false ) {
-        return $this->where_in( $column, $values, $boolean, true, $return_data );
-    }
-
-    /**
-     * Add a or "where not in" clause to the query.
-     *
-     * @param  string  $column
-     * @param  array  $values
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function or_where_not_in( $column, $values, bool $return_data = false ) {
-        return $this->where_not_in( $column, $values, 'or', $return_data );
-    }
-
-    /**
-     * add a "where in null" clause to the query
-     *
-     * @param string $column
-     * @param boolean $not
-     * @param string $boolean
-     * @param boolean $return_data
-     * @return $this|array
-     */
-    public function where_is_null( string $column, bool $not = false, string $boolean = 'and', bool $return_data = false ) {
-        $type = 'is_null';
-        $data = compact( 'type', 'column', 'boolean', 'not' );
-
-        if ( $return_data ) {
-            return $data;
-        }
-
-        $this->wheres[] = $data;
-        return $this;
-    }
-
-    public function or_where_is_null( string $column, $not = false, bool $return_data = false ) {
-        return $this->where_is_null( $column, $not, 'or', $return_data );
-    }
-
-    public function where_not_is_null( string $column, string $boolean = 'and', bool $return_data = false ) {
-        return $this->where_is_null( $column, true, $boolean, $return_data );
-    }
-
-    public function or_where_not_is_null( string $column, bool $return_data = false ) {
-        return $this->or_where_is_null( $column, true, $return_data );
-    }
-
-    /**
-     * Add a where between statement to the query.
-     *
-     * @param  string  $column
-     * @param  array  $values
-     * @param  string  $boolean
-     * @param  bool  $not
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function where_between( $column, array $values, $boolean = 'and', $not = false, bool $return_data = false ) {
-        $type = 'between';
-
-        $data = compact( 'type', 'boolean', 'column', 'values', 'not' );
-
-        if ( $return_data ) {
-            return $data;
-        }
-
-        $this->wheres[] = $data;
-        return $this;
-    }
-
-    /**
-     * Add a or where between statement to the query.
-     *
-     * @param  string  $column
-     * @param  bool  $not
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function or_where_between( $column, array $values, bool $return_data = false ) {
-        return $this->where_between( $column, $values, 'or', false, $return_data );
-    }
-
-    /**
-     * Add a or where not between statement to the query.
-     *
-     * @param  string  $column
-     * @param  array  $values
-     * @param  string  $boolean
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function where_not_between( $column, array $values, $boolean = 'and', bool $return_data = false ) {
-        return $this->where_between( $column, $values, $boolean, true, $return_data );
-    }
-
-    /**
-     * Add a where not between statement to the query.
-     *
-     * @param  string  $column
-     * @param  array  $values
-     * @param  boolean $return_data
-     * @return $this|array
-     */
-    public function or_where_not_between( $column, array $values, bool $return_data = false ) {
-        return $this->where_between( $column, $values, 'or', true, $return_data );
-    }
-
-    /**
-     * Add where raw query
-     *
-     * @param string $sql
-     * @param string $boolean
-     * @param boolean $return_data
-     * @return $this|array
-     */
-    public function where_raw( string $sql, $boolean = 'and', bool $return_data = false ) {
-        $type = 'raw';
-        // Now that we are working with just a simple query we can put the elements
-        // in our array and add the query binding to our array of bindings that
-        // will be bound to each SQL statements when it is finally executed.
-        $data = compact( 'sql', 'boolean', 'type' );
-
-        if ( $return_data ) {
-            return $data;
-        }
-
-        $this->wheres[] = $data;
-        return $this;
-    }
-
-    /**
-     * Add or where raw query
-     *
-     * @param string $sql
-     * @param boolean $return_data
-     * @return $this|array
-     */
-    public function or_where_raw( string $sql, bool $return_data = false ) {
-        return $this->where_raw( $sql, 'or', $return_data );
-    }
-
-    /**
      * Add a "group by" clause to the query.
      *
      * @param  array|string  ...$groups
@@ -665,53 +314,6 @@ class Builder extends Relationship {
     public function group_by( $groups ) {
         $this->groups = is_array( $groups ) ? $groups : func_get_args();
         return $this;
-    }
-
-    /**
-     * Add a "having" clause to the query.
-     *
-     * @param  string  $column
-     * @param  string|null  $operator
-     * @param  string|null  $value
-     * @param  string  $boolean
-     * @return $this
-     */
-    public function having( $column, $operator = null, $value = null, $boolean = 'and' ) {   
-        // Here we will make some assumptions about the operator. If only 2 values are
-        // passed to the method, we will assume that the operator is an equals sign
-        // and keep going. Otherwise, we'll require the operator to be passed in.
-        [$value, $operator] = $this->prepare_value_and_operator(
-            $value, $operator, func_num_args() === 2
-        );
-
-        // If the given operator is not found in the list of valid operators we will
-        // assume that the developer is just short-cutting the '=' operators and
-        // we will set the operators to '=' and set the values appropriately.
-        if ( $this->invalid_operator( $operator ) ) {
-            [$value, $operator] = [$operator, '='];
-        }
-
-        $type = 'basic';
-
-        // Now that we are working with just a simple query we can put the elements
-        // in our array and add the query binding to our array of bindings that
-        // will be bound to each SQL statements when it is finally executed.
-        $this->havings[] = compact( 'type', 'boolean', 'column', 'operator', 'value' );
-
-        return $this;
-    }
-
-     /**
-     * Add a "or having" clause to the query.
-     *
-     * @param  string  $column
-     * @param  string|null  $operator
-     * @param  string|null  $value
-     * @param  string  $boolean
-     * @return $this
-     */
-    public function or_having( $column, $operator = null, $value = null ) {   
-        return $this->having( $column, $operator, $value, 'or' );
     }
 
     /**
@@ -961,6 +563,14 @@ class Builder extends Relationship {
         }
 
         return '%s';
+    }
+
+    public function get_bindings() {
+        return $this->bindings;
+    }
+
+    public function set_bindings( array $bindings ) {
+        return $this->bindings = array_merge( $this->bindings, $bindings );
     }
 
     public function aggregate( $function, $columns = ['*'] ) {

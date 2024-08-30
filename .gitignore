@@ -23,3 +23,4 @@ Homestead.json
 .phpunit.result.cache
 phpcs-report.xml
 .DS_Store
+composer.lock

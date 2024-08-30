@@ -19,7 +19,7 @@ trait HavingClause {
     /**
      * Unset a having from the query.
      *
-     * @param int|string $key The key or index of the clause to remove.
+     * @param int|string $key The key or index of the having to remove.
      * @return $this
      */
     public function unset_having( $key ) {
@@ -29,305 +29,308 @@ trait HavingClause {
     /**
      * Add a basic having to the query.
      *
-     * @param string $column The column to compare.
+     * @param (Closure(static): mixed)|static|string $column The column to compare.
      * @param mixed $operator The operator for comparison.
      * @param mixed $value The value to compare.
-     * @param string $boolean The boolean operator ('and' or 'or').
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having( string $column, $operator = null, $value = null, $boolean = 'and', ?string $name = null ) {
-        return $this->clause( 'havings', $column, $operator, $value, $boolean, $name );
+    public function having( $column, $operator = null, $value = null, ?string $name = null ) {
+        return $this->clause( "havings", $column, $operator, $value, $name );
     }
 
     /**
      * Add an "or having" to the query.
      *
-     * @param string $column The column to compare.
+     * @param (Closure(static): mixed)|static|string $column The column to compare.
      * @param mixed $operator The operator for comparison.
      * @param mixed $value The value to compare.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
     public function or_having( string $column, $operator = null, $value = null, ?string $name = null ) {
-        return $this->or_clause( 'havings', $column, $operator, $value, $name );
+        return $this->or_clause( "havings", $column, $operator, $value, $name );
     }
 
     /**
      * Add a having comparing two columns to the query.
      *
-     * @param string $column The column to compare.
+     * @param string $first_column The first column to compare.
      * @param mixed $operator The operator for comparison.
-     * @param mixed $value The value to compare.
-     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param mixed $second_column The second column to compare.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_column( string $column, $operator = null, $value = null, $boolean = 'and', ?string $name = null ) {
-        return $this->having_column( 'havings', $column, $operator, $value, $boolean, $name );
+    public function having_column( string $first_column, $operator = null, $second_column = null, ?string $name = null ) {
+        return $this->clause_column( "havings", $first_column, $operator, $second_column, $name );
     }
 
     /**
      * Add an "or having comparing two columns" to the query.
-     *
-     * @param string $column The column to compare.
+     * 
+     * @param string $first_column The first column to compare.
      * @param mixed $operator The operator for comparison.
-     * @param mixed $value The value to compare.
+     * @param mixed $second_column The second column to compare.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function or_having_column( string $column, $operator = null, $value = null, ?string $name = null ) {
-        return $this->or_clause_column( 'havings', $column, $operator, $value, $name );
+    public function or_having_column( string $first_column, $operator = null, $second_column = null, ?string $name = null ) {
+        return $this->or_clause_column( "havings", $first_column, $operator, $second_column, $name );
     }
 
     /**
      * Add an exists having to the query.
      *
-     * @param Closure|array|static $callback The query or callback for the exists having.
-     * @param string $boolean The boolean operator ('and' or 'or').
-     * @param bool $not Whether to negate the exists having.
+     * @param (Closure(static): mixed)|static $callback The query or callback for the exists having.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_exists( $callback, $boolean = 'and', $not = false, ?string $name = null ) {
-        return $this->clause_exists( 'havings', $callback, $boolean, $not, $name );
+    public function having_exists( $callback, ?string $name = null ) {
+        return $this->clause_exists( "havings", $callback, $name );
+    }
+
+    /**
+     * Add an "or exists" having to the query.
+     *
+     * @param (Closure(static): mixed)|static $callback The query or callback for the exists having.
+     * @param ?string $name Optional name for the having.
+     * @return $this
+     */
+    public function or_having_exists( $callback, ?string $name = null ) {
+        return $this->or_clause_exists( "havings", $callback, $name );
     }
 
     /**
      * Add a "not exists" having to the query.
      *
-     * @param Closure|array|static $callback The query or callback for the not exists having.
-     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param (Closure(static): mixed)|static $callback The query or callback for the exists having.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_not_exists( $callback, $boolean = 'and', ?string $name = null ) {
-        return $this->clause_not_exists( 'havings', $callback, $boolean, $name );
+    public function having_not_exists( $callback, ?string $name = null ) {
+        return $this->clause_not_exists( "havings", $callback, $name );
+    }
+
+    /**
+     * Add an "or not exists" having to the query.
+     *
+     * @param (Closure(static): mixed)|static $callback The query or callback for the exists having.
+     * @param ?string $name Optional name for the having.
+     * @return $this
+     */
+    public function or_having_not_exists( $callback, ?string $name = null ) {
+        return $this->or_clause_not_exists( "havings", $callback, $name );
     }
 
     /**
      * Add a "having in" having to the query.
      *
-     * @param string $column The column to check.
-     * @param array $values The values for the "in" check.
-     * @param string $boolean The boolean operator ('and' or 'or').
-     * @param bool $not Whether to negate the in having.
+     * @param string $column The column to compare.
+     * @param array $values The values to check against.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_in( string $column, array $values, $boolean = 'and', $not = false, ?string $name = null ) {
-        return $this->clause_in( 'havings', $column, $values, $boolean, $not, $name );
+    public function having_in( string $column, array $values, ?string $name = null ) {
+        return $this->clause_in( "havings", $column, $values, $name );
     }
 
     /**
-     * Add an "or having in" having to the query.
+     * Add an "or in" having to the query.
      *
-     * @param string $column The column to check.
-     * @param array $values The values for the "in" check.
+     * @param string $column The column to compare.
+     * @param array $values The values to check against.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
     public function or_having_in( string $column, array $values, ?string $name = null ) {
-        return $this->or_clause_in( 'havings', $column, $values, $name );
+        return $this->or_clause_in( "havings", $column, $values, $name );
     }
 
     /**
-     * Add a "having not in" having to the query.
+     * Add a "not in" having to the query.
      *
-     * @param string $column The column to check.
-     * @param array $values The values for the "not in" check.
-     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param string $column The column to compare.
+     * @param array $values The values to check against.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_not_in( string $column, array $values, $boolean = 'and', ?string $name = null ) {
-        return $this->clause_not_in( 'havings', $column, $values, $boolean, $name );
+    public function having_not_in( string $column, array $values, ?string $name = null ) {
+        return $this->clause_not_in( "havings", $column, $values, $name );
     }
 
     /**
-     * Add an "or having not in" having to the query.
+     * Add an "or not in" having to the query.
      *
-     * @param string $column The column to check.
-     * @param array $values The values for the "not in" check.
+     * @param string $column The column to compare.
+     * @param array $values The values to check against.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
     public function or_having_not_in( string $column, array $values, ?string $name = null ) {
-        return $this->or_clause_not_in( 'havings', $column, $values, $name );
+        return $this->or_clause_not_in( "havings", $column, $values, $name );
     }
 
     /**
-     * Add a "having like" having to the query.
+     * Add a "like" having to the query.
      *
-     * @param string $column The column to check.
-     * @param string $value The value for the "like" check.
-     * @param string $boolean The boolean operator ('and' or 'or').
-     * @param bool $not Whether to negate the like having.
+     * @param string $column The column to compare.
+     * @param string $value The value to compare.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_like( string $column, string $value, $boolean = 'and', $not = false, ?string $name = null ) {
-        return $this->clause_like( 'havings', $column, $value, $boolean, $not, $name );
+    public function having_like( string $column, string $value, ?string $name = null ) {
+        return $this->clause_like( "havings", $column, $value, $name );
     }
 
     /**
-     * Add an "or having like" having to the query.
+     * Add an "or like" having to the query.
      *
-     * @param string $column The column to check.
-     * @param string $value The value for the "like" check.
+     * @param string $column The column to compare.
+     * @param string $value The value to compare.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
     public function or_having_like( string $column, string $value, ?string $name = null ) {
-        return $this->or_clause_like( 'havings', $column, $value, $name );
+        return $this->or_clause_like( "havings", $column, $value, $name );
     }
 
     /**
-     * Add a "having not like" having to the query.
+     * Add a "not like" having to the query.
      *
-     * @param string $column The column to check.
-     * @param string $value The value for the "not like" check.
-     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param string $column The column to compare.
+     * @param string $value The value to compare.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_not_like( string $column, string $value, $boolean = 'and', ?string $name = null ) {
-        return $this->clause_not_like( 'havings', $column, $value, $boolean, $name );
+    public function having_not_like( string $column, string $value, ?string $name = null ) {
+        return $this->clause_not_like( "havings", $column, $value, $name );
     }
 
     /**
-     * Add an "or having not like" having to the query.
+     * Add an "or not like" having to the query.
      *
-     * @param string $column The column to check.
-     * @param string $value The value for the "not like" check.
+     * @param string $column The column to compare.
+     * @param string $value The value to compare.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
     public function or_having_not_like( string $column, string $value, ?string $name = null ) {
-        return $this->or_clause_not_like( 'havings', $column, $value, $name );
+        return $this->or_clause_not_like( "havings", $column, $value, $name );
     }
 
     /**
-     * Add a "having is null" having to the query.
+     * Add an "is null" having to the query.
      *
      * @param string $column The column to check.
-     * @param bool $not Whether to negate the is null having.
-     * @param string $boolean The boolean operator ('and' or 'or').
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_is_null( string $column, bool $not = false, $boolean = 'and', ?string $name = null ) {
-        return $this->clause_is_null( 'havings', $column, $not, $boolean, $name );
+    public function having_is_null( string $column, ?string $name = null ) {
+        return $this->clause_is_null( "havings", $column, $name );
     }
 
     /**
-     * Add an "or having is null" having to the query.
+     * Add an "or is null" having to the query.
      *
      * @param string $column The column to check.
-     * @param bool $not Whether to negate the is null having.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function or_having_is_null( string $column, bool $not = false, ?string $name = null ) {
-        return $this->or_clause_is_null( 'havings', $column, $not, $name );
+    public function or_having_is_null( string $column, ?string $name = null ) {
+        return $this->or_clause_is_null( "havings", $column, $name );
     }
 
     /**
-     * Add a "having not is null" having to the query.
+     * Add a "not is null" having to the query.
      *
      * @param string $column The column to check.
-     * @param string $boolean The boolean operator ('and' or 'or').
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_not_is_null( string $column, $boolean = 'and', ?string $name = null ) {
-        return $this->clause_not_is_null( 'havings', $column, $boolean, $name );
+    public function having_not_is_null( string $column, ?string $name = null ) {
+        return $this->clause_not_is_null( "havings", $column, $name );
     }
 
     /**
-     * Add an "or having not is null" having to the query.
+     * Add an "or not is null" having to the query.
      *
      * @param string $column The column to check.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
     public function or_having_not_is_null( string $column, ?string $name = null ) {
-        return $this->or_clause_not_is_null( 'havings', $column, $name );
+        return $this->or_clause_not_is_null( "havings", $column, $name );
     }
 
     /**
-     * Add a "having between" having to the query.
+     * Add a "between" having to the query.
      *
-     * @param string $column The column to check.
-     * @param array $values The range of values for the between check.
-     * @param string $boolean The boolean operator ('and' or 'or').
-     * @param bool $not Whether to negate the between having.
+     * @param string $column The column to compare.
+     * @param array $values The values to compare.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_between( string $column, array $values, $boolean = 'and', $not = false, ?string $name = null ) {
-        return $this->clause_between( 'havings', $column, $values, $boolean, $not, $name );
+    public function having_between( string $column, array $values, ?string $name = null ) {
+        return $this->clause_between( "havings", $column, $values, $name );
     }
 
     /**
-     * Add an "or having between" having to the query.
+     * Add an "or between" having to the query.
      *
-     * @param string $column The column to check.
-     * @param array $values The range of values for the between check.
+     * @param string $column The column to compare.
+     * @param array $values The values to compare.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
     public function or_having_between( string $column, array $values, ?string $name = null ) {
-        return $this->or_clause_between( 'havings', $column, $values, $name );
+        return $this->or_clause_between( "havings", $column, $values, $name );
     }
 
     /**
-     * Add a "having not between" having to the query.
+     * Add a "not between" having to the query.
      *
-     * @param string $column The column to check.
-     * @param array $values The range of values for the not between check.
-     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param string $column The column to compare.
+     * @param array $values The values to compare.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_not_between( string $column, array $values, $boolean = 'and', ?string $name = null ) {
-        return $this->clause_not_between( 'havings', $column, $values, $boolean, $name );
+    public function having_not_between( string $column, array $values, ?string $name = null ) {
+        return $this->clause_not_between( "havings", $column, $values, $name );
     }
 
     /**
-     * Add an "or having not between" having to the query.
+     * Add an "or not between" having to the query.
      *
-     * @param string $column The column to check.
-     * @param array $values The range of values for the not between check.
+     * @param string $column The column to compare.
+     * @param array $values The values to compare.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
     public function or_having_not_between( string $column, array $values, ?string $name = null ) {
-        return $this->or_clause_not_between( 'havings', $column, $values, $name );
+        return $this->or_clause_not_between( "havings", $column, $values, $name );
     }
 
     /**
      * Add a raw having to the query.
      *
-     * @param string $sql The raw SQL having.
-     * @param array $bindings The bindings for the raw SQL.
-     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param string $sql The SQL statement.
+     * @param array $bindings The bindings for the raw SQL statement.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
-    public function having_raw( string $sql, array $bindings = [], $boolean = 'and', ?string $name = null ) {
-        return $this->clause_raw( 'havings', $sql, $bindings, $boolean, $name );
+    public function having_raw( string $sql, array $bindings = [], ?string $name = null ) {
+        return $this->clause_raw( "havings", $sql, $bindings, $name );
     }
 
     /**
-     * Add an "or raw having" to the query.
+     * Add an "or raw" having to the query.
      *
-     * @param string $sql The raw SQL having.
-     * @param array $bindings The bindings for the raw SQL.
+     * @param string $sql The SQL statement.
+     * @param array $bindings The bindings for the raw SQL statement.
      * @param ?string $name Optional name for the having.
      * @return $this
      */
     public function or_having_raw( string $sql, array $bindings = [], ?string $name = null ) {
-        return $this->or_clause_raw( 'havings', $sql, $bindings, $name );
+        return $this->or_clause_raw( "havings", $sql, $bindings, $name );
     }
 }

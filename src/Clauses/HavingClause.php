@@ -157,6 +157,57 @@ trait HavingClause {
     }
 
     /**
+     * Add a "having like" having to the query.
+     *
+     * @param string $column The column to check.
+     * @param string $value The value for the "like" check.
+     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param bool $not Whether to negate the like having.
+     * @param ?string $name Optional name for the having.
+     * @return $this
+     */
+    public function having_like( string $column, string $value, $boolean = 'and', $not = false, ?string $name = null ) {
+        return $this->clause_like( 'havings', $column, $value, $boolean, $not, $name );
+    }
+
+    /**
+     * Add an "or having like" having to the query.
+     *
+     * @param string $column The column to check.
+     * @param string $value The value for the "like" check.
+     * @param ?string $name Optional name for the having.
+     * @return $this
+     */
+    public function or_having_like( string $column, string $value, ?string $name = null ) {
+        return $this->or_clause_like( 'havings', $column, $value, $name );
+    }
+
+    /**
+     * Add a "having not like" having to the query.
+     *
+     * @param string $column The column to check.
+     * @param string $value The value for the "not like" check.
+     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param ?string $name Optional name for the having.
+     * @return $this
+     */
+    public function having_not_like( string $column, string $value, $boolean = 'and', ?string $name = null ) {
+        return $this->clause_not_like( 'havings', $column, $value, $boolean, $name );
+    }
+
+    /**
+     * Add an "or having not like" having to the query.
+     *
+     * @param string $column The column to check.
+     * @param string $value The value for the "not like" check.
+     * @param ?string $name Optional name for the having.
+     * @return $this
+     */
+    public function or_having_not_like( string $column, string $value, ?string $name = null ) {
+        return $this->or_clause_not_like( 'havings', $column, $value, $name );
+    }
+
+    /**
      * Add a "having is null" having to the query.
      *
      * @param string $column The column to check.

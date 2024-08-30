@@ -222,6 +222,10 @@ class Compiler {
                 case 'basic':
                     $where_query .= " {$where['boolean']} {$where['column']} {$where['operator']} {$query->set_binding($where['value'])}";
                     break;
+                case 'like':
+                    $like         = $where['not'] ? 'not like' : 'like';
+                    $where_query .= " {$where['boolean']} {$where['column']} {$like} {$query->set_binding($where['value'])}";
+                    break;
                 case 'between':
                     $between      = $where['not'] ? 'not between' : 'between';
                     $where_query .= " {$where['boolean']} {$where['column']} {$between} {$query->set_binding($where['values'][0])} and {$query->set_binding($where['values'][1])}";

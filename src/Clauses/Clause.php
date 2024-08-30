@@ -230,6 +230,64 @@ trait Clause {
     }
 
     /**
+     * Add a "clause like" clause to the query.
+     *
+     * @param string $clause_type The type of the clause.
+     * @param string $column The column to check.
+     * @param string $value The value for the "like" check.
+     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param bool $not Whether to negate the like clause.
+     * @param ?string $name Optional name for the clause.
+     * @return $this
+     */
+    protected function clause_like( string $clause_type, string $column, string $value, $boolean = 'and', $not = false, ?string $name = null ) {
+        $type = 'like'; // Define the type of the clause
+        $data = compact( 'type', 'column', 'value', 'boolean', 'not' );
+
+        return $this->set_clause( $clause_type, $data, $name );
+    }
+
+    /**
+     * Add an "or clause like" clause to the query.
+     *
+     * @param string $clause_type The type of the clause.
+     * @param string $column The column to check.
+     * @param string $value The value for the "like" check.
+     * @param ?string $name Optional name for the clause.
+     * @return $this
+     */
+    protected function or_clause_like( string $clause_type, string $column, string $value, ?string $name = null ) {
+        return $this->clause_like( $clause_type, $column, $value, 'or', false, $name );
+    }
+
+    /**
+     * Add a "clause not like" clause to the query.
+     *
+     * @param string $clause_type The type of the clause.
+     * @param string $column The column to check.
+     * @param string $value The value for the "not like" check.
+     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param ?string $name Optional name for the clause.
+     * @return $this
+     */
+    protected function clause_not_like( string $clause_type, string $column, string $value, $boolean = 'and', ?string $name = null ) {
+        return $this->clause_like( $clause_type, $column, $value, $boolean, true, $name );
+    }
+
+    /**
+     * Add an "or clause not like" clause to the query.
+     *
+     * @param string $clause_type The type of the clause.
+     * @param string $column The column to check.
+     * @param string $value The value for the "not like" check.
+     * @param ?string $name Optional name for the clause.
+     * @return $this
+     */
+    protected function or_clause_not_like( string $clause_type, string $column, string $value, ?string $name = null ) {
+        return $this->clause_not_like( $clause_type, $column, $value, 'or', $name );
+    }
+
+    /**
      * Add a "clause is null" clause to the query.
      *
      * @param string $clause_type The type of the clause.

@@ -157,6 +157,57 @@ trait OnClause {
     }
 
     /**
+     * Add a "on like" on to the query.
+     *
+     * @param string $column The column to check.
+     * @param string $value The value for the "like" check.
+     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param bool $not Whether to negate the like on.
+     * @param ?string $name Optional name for the on.
+     * @return $this
+     */
+    public function on_like( string $column, string $value, $boolean = 'and', $not = false, ?string $name = null ) {
+        return $this->clause_like( 'ons', $column, $value, $boolean, $not, $name );
+    }
+
+    /**
+     * Add an "or on like" on to the query.
+     *
+     * @param string $column The column to check.
+     * @param string $value The value for the "like" check.
+     * @param ?string $name Optional name for the on.
+     * @return $this
+     */
+    public function or_on_like( string $column, string $value, ?string $name = null ) {
+        return $this->or_clause_like( 'ons', $column, $value, $name );
+    }
+
+    /**
+     * Add a "on not like" on to the query.
+     *
+     * @param string $column The column to check.
+     * @param string $value The value for the "not like" check.
+     * @param string $boolean The boolean operator ('and' or 'or').
+     * @param ?string $name Optional name for the on.
+     * @return $this
+     */
+    public function on_not_like( string $column, string $value, $boolean = 'and', ?string $name = null ) {
+        return $this->clause_not_like( 'ons', $column, $value, $boolean, $name );
+    }
+
+    /**
+     * Add an "or on not like" on to the query.
+     *
+     * @param string $column The column to check.
+     * @param string $value The value for the "not like" check.
+     * @param ?string $name Optional name for the on.
+     * @return $this
+     */
+    public function or_on_not_like( string $column, string $value, ?string $name = null ) {
+        return $this->or_clause_not_like( 'ons', $column, $value, $name );
+    }
+
+    /**
      * Add a "on is null" on to the query.
      *
      * @param string $column The column to check.

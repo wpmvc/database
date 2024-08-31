@@ -432,7 +432,7 @@ class Builder extends Relationship {
         return $this->process_relationships( $wpdb->get_results( $this->to_sql() ), $this->relations, $this->model );
     }
 
-    public function pagination( int $per_page, int $current_page, int $max_per_page = 100, int $min_per_page = 10 ) {
+    public function pagination( int $current_page, int $per_page = 10, int $min_per_page = 10, int $max_per_page = 100 ) {
         if ( $per_page > $max_per_page || $per_page < $min_per_page ) {
             $per_page = $max_per_page;
         }

@@ -20,7 +20,7 @@ trait HavingClause {
      * Unset a having from the query.
      *
      * @param int|string $key The key or index of the having to remove.
-     * @return $this
+     * @return static
      */
     public function unset_having( $key ) {
         return $this->unset_clause( 'havings', $key );
@@ -33,7 +33,7 @@ trait HavingClause {
      * @param mixed $operator The operator for comparison.
      * @param mixed $value The value to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having( $column, $operator = null, $value = null, ?string $name = null ) {
         return $this->clause( "havings", $column, $operator, $value, $name );
@@ -46,7 +46,7 @@ trait HavingClause {
      * @param mixed $operator The operator for comparison.
      * @param mixed $value The value to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having( string $column, $operator = null, $value = null, ?string $name = null ) {
         return $this->or_clause( "havings", $column, $operator, $value, $name );
@@ -59,7 +59,7 @@ trait HavingClause {
      * @param mixed $operator The operator for comparison.
      * @param mixed $second_column The second column to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_column( string $first_column, $operator = null, $second_column = null, ?string $name = null ) {
         return $this->clause_column( "havings", $first_column, $operator, $second_column, $name );
@@ -72,7 +72,7 @@ trait HavingClause {
      * @param mixed $operator The operator for comparison.
      * @param mixed $second_column The second column to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_column( string $first_column, $operator = null, $second_column = null, ?string $name = null ) {
         return $this->or_clause_column( "havings", $first_column, $operator, $second_column, $name );
@@ -83,7 +83,7 @@ trait HavingClause {
      *
      * @param (Closure(static): mixed)|static $callback The query or callback for the exists having.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_exists( $callback, ?string $name = null ) {
         return $this->clause_exists( "havings", $callback, $name );
@@ -94,7 +94,7 @@ trait HavingClause {
      *
      * @param (Closure(static): mixed)|static $callback The query or callback for the exists having.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_exists( $callback, ?string $name = null ) {
         return $this->or_clause_exists( "havings", $callback, $name );
@@ -105,7 +105,7 @@ trait HavingClause {
      *
      * @param (Closure(static): mixed)|static $callback The query or callback for the exists having.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_not_exists( $callback, ?string $name = null ) {
         return $this->clause_not_exists( "havings", $callback, $name );
@@ -116,7 +116,7 @@ trait HavingClause {
      *
      * @param (Closure(static): mixed)|static $callback The query or callback for the exists having.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_not_exists( $callback, ?string $name = null ) {
         return $this->or_clause_not_exists( "havings", $callback, $name );
@@ -128,7 +128,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param array $values The values to check against.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_in( string $column, array $values, ?string $name = null ) {
         return $this->clause_in( "havings", $column, $values, $name );
@@ -140,7 +140,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param array $values The values to check against.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_in( string $column, array $values, ?string $name = null ) {
         return $this->or_clause_in( "havings", $column, $values, $name );
@@ -152,7 +152,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param array $values The values to check against.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_not_in( string $column, array $values, ?string $name = null ) {
         return $this->clause_not_in( "havings", $column, $values, $name );
@@ -164,7 +164,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param array $values The values to check against.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_not_in( string $column, array $values, ?string $name = null ) {
         return $this->or_clause_not_in( "havings", $column, $values, $name );
@@ -176,7 +176,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param string $value The value to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_like( string $column, string $value, ?string $name = null ) {
         return $this->clause_like( "havings", $column, $value, $name );
@@ -188,7 +188,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param string $value The value to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_like( string $column, string $value, ?string $name = null ) {
         return $this->or_clause_like( "havings", $column, $value, $name );
@@ -200,7 +200,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param string $value The value to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_not_like( string $column, string $value, ?string $name = null ) {
         return $this->clause_not_like( "havings", $column, $value, $name );
@@ -212,7 +212,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param string $value The value to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_not_like( string $column, string $value, ?string $name = null ) {
         return $this->or_clause_not_like( "havings", $column, $value, $name );
@@ -223,7 +223,7 @@ trait HavingClause {
      *
      * @param string $column The column to check.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_is_null( string $column, ?string $name = null ) {
         return $this->clause_is_null( "havings", $column, $name );
@@ -234,7 +234,7 @@ trait HavingClause {
      *
      * @param string $column The column to check.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_is_null( string $column, ?string $name = null ) {
         return $this->or_clause_is_null( "havings", $column, $name );
@@ -245,7 +245,7 @@ trait HavingClause {
      *
      * @param string $column The column to check.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_not_is_null( string $column, ?string $name = null ) {
         return $this->clause_not_is_null( "havings", $column, $name );
@@ -256,7 +256,7 @@ trait HavingClause {
      *
      * @param string $column The column to check.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_not_is_null( string $column, ?string $name = null ) {
         return $this->or_clause_not_is_null( "havings", $column, $name );
@@ -268,7 +268,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param array $values The values to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_between( string $column, array $values, ?string $name = null ) {
         return $this->clause_between( "havings", $column, $values, $name );
@@ -280,7 +280,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param array $values The values to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_between( string $column, array $values, ?string $name = null ) {
         return $this->or_clause_between( "havings", $column, $values, $name );
@@ -292,7 +292,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param array $values The values to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_not_between( string $column, array $values, ?string $name = null ) {
         return $this->clause_not_between( "havings", $column, $values, $name );
@@ -304,7 +304,7 @@ trait HavingClause {
      * @param string $column The column to compare.
      * @param array $values The values to compare.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_not_between( string $column, array $values, ?string $name = null ) {
         return $this->or_clause_not_between( "havings", $column, $values, $name );
@@ -316,7 +316,7 @@ trait HavingClause {
      * @param string $sql The SQL statement.
      * @param array $bindings The bindings for the raw SQL statement.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function having_raw( string $sql, array $bindings = [], ?string $name = null ) {
         return $this->clause_raw( "havings", $sql, $bindings, $name );
@@ -328,7 +328,7 @@ trait HavingClause {
      * @param string $sql The SQL statement.
      * @param array $bindings The bindings for the raw SQL statement.
      * @param ?string $name Optional name for the having.
-     * @return $this
+     * @return static
      */
     public function or_having_raw( string $sql, array $bindings = [], ?string $name = null ) {
         return $this->or_clause_raw( "havings", $sql, $bindings, $name );

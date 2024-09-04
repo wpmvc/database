@@ -19,9 +19,9 @@ trait Clause {
      * @param string $clause_type The type of the clause.
      * @param array $args The arguments for the clause.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
-    protected function set_clause( string $clause_type, array $args, ?string $name = null ): self {
+    protected function set_clause( string $clause_type, array $args, ?string $name = null ) {
         if ( $name ) {
             $this->clauses[$clause_type][$name] = $args;
         } else {
@@ -35,7 +35,7 @@ trait Clause {
      *
      * @param string $clauses The type of clause (e.g., 'wheres', 'havings', 'ons') to unset.
      * @param int|string $key The key or index of the clause to remove.
-     * @return $this Returns the current instance for method chaining.
+     * @return static Returns the current instance for method chaining.
      */
     protected function unset_clause( string $clauses, $key ) {
         unset( $this->clauses[$clauses][$key] );
@@ -51,7 +51,7 @@ trait Clause {
      * @param mixed $value The value to compare.
      * @param ?string $name Optional name for the clause.
      * @param string $boolean The boolean operator ('and' or 'or').
-     * @return $this
+     * @return static
      */
     protected function clause( string $clause_type, $column, $operator = null, $value = null, ?string $name = null, $boolean = 'and' ) {
         if ( $column instanceof Closure ) {
@@ -89,7 +89,7 @@ trait Clause {
      * @param mixed $operator The operator for comparison.
      * @param mixed $value The value to compare.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause( string $clause_type, $column, $operator = null, $value = null, ?string $name = null ) {
         return $this->clause( $clause_type, $column, $operator, $value, $name, 'or' );
@@ -104,7 +104,7 @@ trait Clause {
      * @param mixed $second_column The second column to compare.
      * @param ?string $name Optional name for the clause.
      * @param string $boolean The boolean operator ('and' or 'or').
-     * @return $this
+     * @return static
      */
     protected function clause_column( string $clause_type, string $first_column, $operator = null, $second_column = null, ?string $name = null, $boolean = 'and' ) {
         // Prepare value and operator for the clause
@@ -132,7 +132,7 @@ trait Clause {
      * @param mixed $operator The operator for comparison.
      * @param mixed $second_column The second column to compare.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_column( string $clause_type, string $first_column, $operator = null, $second_column = null, ?string $name = null ) {
         return $this->clause_column( $clause_type, $first_column, $operator, $second_column, $name, 'or' );
@@ -146,7 +146,7 @@ trait Clause {
      * @param ?string $name Optional name for the clause.
      * @param string $boolean The boolean operator ('and' or 'or').
      * @param bool $not Whether to negate the exists clause.
-     * @return $this
+     * @return static
      */
     protected function clause_exists( string $clause_type, $callback, ?string $name = null, $boolean = 'and', $not = false ) {
         if ( is_callable( $callback ) ) {
@@ -168,7 +168,7 @@ trait Clause {
      * @param string $clause_type The type of the clause to add (e.g., 'wheres', 'havings').
      * @param (Closure(static): mixed)|static $callback The query or callback for the exists clause.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_exists( string $clause_type, $callback, ?string $name = null ) {
         return $this->clause_exists( $clause_type, $callback, $name, 'or', false );
@@ -180,7 +180,7 @@ trait Clause {
      * @param string $clause_type The type of the clause to add (e.g., 'wheres', 'havings').
      * @param (Closure(static): mixed)|static $callback The query or callback for the exists clause.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function clause_not_exists( string $clause_type, $callback, ?string $name = null ) {
         return $this->clause_exists( $clause_type, $callback, $name, 'and', true );
@@ -192,7 +192,7 @@ trait Clause {
      * @param string $clause_type The type of the clause to add (e.g., 'wheres', 'havings').
      * @param (Closure(static): mixed)|static $callback The query or callback for the exists clause.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_not_exists( string $clause_type, $callback, ?string $name = null ) {
         return $this->clause_exists( $clause_type, $callback, $name, 'or', true );
@@ -207,7 +207,7 @@ trait Clause {
      * @param ?string $name Optional name for the clause.
      * @param string $boolean The boolean operator ('and' or 'or').
      * @param bool $not Whether to negate the in clause.
-     * @return $this
+     * @return static
      */
     protected function clause_in( string $clause_type, string $column, array $values, ?string $name = null, $boolean = 'and', $not = false ) {
         $type = 'in'; // Define the type of the clause
@@ -223,7 +223,7 @@ trait Clause {
      * @param string $column The column to compare.
      * @param array $values The values to check against.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_in( string $clause_type, string $column, array $values, ?string $name = null ) {
         return $this->clause_in( $clause_type, $column, $values, $name, 'or', false );
@@ -236,7 +236,7 @@ trait Clause {
      * @param string $column The column to compare.
      * @param array $values The values to check against.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function clause_not_in( string $clause_type, string $column, array $values, ?string $name = null ) {
         return $this->clause_in( $clause_type, $column, $values, $name, 'and', true );
@@ -249,7 +249,7 @@ trait Clause {
      * @param string $column The column to compare.
      * @param array $values The values to check against.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_not_in( string $clause_type, string $column, array $values, ?string $name = null ) {
         return $this->clause_in( $clause_type, $column, $values, $name, 'or', true );
@@ -264,7 +264,7 @@ trait Clause {
      * @param ?string $name Optional name for the clause.
      * @param string $boolean The boolean operator ('and' or 'or').
      * @param bool $not Whether to negate the like clause.
-     * @return $this
+     * @return static
      */
     protected function clause_like( string $clause_type, string $column, string $value, ?string $name = null, $boolean = 'and', $not = false ) {
         $type = 'like'; // Define the type of the clause
@@ -280,7 +280,7 @@ trait Clause {
      * @param string $column The column to compare.
      * @param string $value The value to compare.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_like( string $clause_type, string $column, string $value, ?string $name = null ) {
         return $this->clause_like( $clause_type, $column, $value, $name, 'or', false );
@@ -293,7 +293,7 @@ trait Clause {
      * @param string $column The column to compare.
      * @param string $value The value to compare.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function clause_not_like( string $clause_type, string $column, string $value, ?string $name = null ) {
         return $this->clause_like( $clause_type, $column, $value, $name, 'and', true );
@@ -306,7 +306,7 @@ trait Clause {
      * @param string $column The column to compare.
      * @param string $value The value to compare.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_not_like( string $clause_type, string $column, string $value, ?string $name = null ) {
         return $this->clause_like( $clause_type, $column, $value, $name, 'or', true );
@@ -321,7 +321,7 @@ trait Clause {
      * @param ?string $name Optional name for the clause.
      * @param string $boolean The boolean operator ('and' or 'or').
      * @param bool $not Whether to negate the between clause.
-     * @return $this
+     * @return static
      */
     protected function clause_between( string $clause_type, string $column, array $values, ?string $name = null, $boolean = 'and', $not = false ) {
         $type = 'between'; // Define the type of the clause
@@ -337,7 +337,7 @@ trait Clause {
      * @param string $column The column to compare.
      * @param array $values The values to compare.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_between( string $clause_type, string $column, array $values, ?string $name = null ) {
         return $this->clause_between( $clause_type, $column, $values, $name, 'or', false );
@@ -350,7 +350,7 @@ trait Clause {
      * @param string $column The column to compare.
      * @param array $values The values to compare.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function clause_not_between( string $clause_type, string $column, array $values, ?string $name = null ) {
         return $this->clause_between( $clause_type, $column, $values, $name, 'and', true );
@@ -363,7 +363,7 @@ trait Clause {
      * @param string $column The column to compare.
      * @param array $values The values to compare.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_not_between( string $clause_type, string $column, array $values, ?string $name = null ) {
         return $this->clause_between( $clause_type, $column, $values, $name, 'or', true );
@@ -377,7 +377,7 @@ trait Clause {
      * @param array $bindings The bindings for the raw SQL statement.
      * @param ?string $name Optional name for the clause.
      * @param string $boolean The boolean operator ('and' or 'or').
-     * @return $this
+     * @return static
      */
     protected function clause_raw( string $clause_type, string $sql, array $bindings = [], ?string $name = null, $boolean = 'and' ) {
         $type = 'raw'; // Define the type of the clause
@@ -393,7 +393,7 @@ trait Clause {
      * @param string $sql The SQL statement.
      * @param array $bindings The bindings for the raw SQL statement.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_raw( string $clause_type, string $sql, array $bindings = [], ?string $name = null ) {
         return $this->clause_raw( $clause_type, $sql, $bindings, $name, 'or' );
@@ -407,7 +407,7 @@ trait Clause {
      * @param ?string $name Optional name for the clause.
      * @param string $boolean The boolean operator ('and' or 'or').
      * @param bool $not Whether to negate the is null clause.
-     * @return $this
+     * @return static
      */
     protected function clause_is_null( string $clause_type, string $column, ?string $name = null, $boolean = 'and', $not = false ) {
         $type = 'is_null'; // Define the type of the clause
@@ -422,7 +422,7 @@ trait Clause {
      * @param string $clause_type The type of the clause.
      * @param string $column The column to check.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_is_null( string $clause_type, string $column, ?string $name = null ) {
         return $this->clause_is_null( $clause_type, $column, $name, 'or', false );
@@ -434,7 +434,7 @@ trait Clause {
      * @param string $clause_type The type of the clause.
      * @param string $column The column to check.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function clause_not_is_null( string $clause_type, string $column, ?string $name = null ) {
         return $this->clause_is_null( $clause_type, $column, $name, 'and', true );
@@ -446,7 +446,7 @@ trait Clause {
      * @param string $clause_type The type of the clause.
      * @param string $column The column to check.
      * @param ?string $name Optional name for the clause.
-     * @return $this
+     * @return static
      */
     protected function or_clause_not_is_null( string $clause_type, string $column, ?string $name = null ) {
         return $this->clause_is_null( $clause_type, $column, $name, 'or', true );

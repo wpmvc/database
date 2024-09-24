@@ -291,7 +291,13 @@ class Compiler {
             }
         }
 
-        return $this->remove_leading_boolean( $where_query );
+        $where_query = trim( $this->remove_leading_boolean( $where_query ) );
+
+        if ( in_array( $where_query, ['where', 'having', 'on'], true ) ) {
+            return '';
+        }
+
+        return $where_query;
     }
 
      /**

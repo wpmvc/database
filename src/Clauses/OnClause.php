@@ -218,7 +218,7 @@ trait OnClause {
         return $this->or_clause_not_like( "ons", $column, $value, $name );
     }
 
-    /**
+     /**
      * Add an "is null" on to the query.
      *
      * @param string $column The column to check.
@@ -226,7 +226,8 @@ trait OnClause {
      * @return static
      */
     public function on_is_null( string $column, ?string $name = null ) {
-        return $this->clause_is_null( "ons", $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'on_null' );
+        return $this->on_null( $column, $name );
     }
 
     /**
@@ -237,7 +238,8 @@ trait OnClause {
      * @return static
      */
     public function or_on_is_null( string $column, ?string $name = null ) {
-        return $this->or_clause_is_null( "ons", $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'or_on_null' );
+        return $this->or_on_null( $column, $name );
     }
 
     /**
@@ -248,8 +250,8 @@ trait OnClause {
      * @return static
      */
     public function on_not_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'on_is_not_null' );
-        return $this->on_is_not_null( $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'on_not_null' );
+        return $this->on_not_null( $column, $name );
     }
 
     /**
@@ -260,30 +262,52 @@ trait OnClause {
      * @return static
      */
     public function or_on_not_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'or_on_is_not_null' );
-        return $this->or_on_is_not_null( $column, $name );
-    }
-
-     /**
-     * Add a "is not null" on to the query.
-     *
-     * @param string $column The column to check.
-     * @param ?string $name Optional name for the on.
-     * @return static
-     */
-    public function on_is_not_null( string $column, ?string $name = null ) {
-        return $this->clause_is_not_null( "ons", $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'or_on_not_null' );
+        return $this->or_on_not_null( $column, $name );
     }
 
     /**
-     * Add an "or is not null" on to the query.
+     * Add an "null" on to the query.
      *
      * @param string $column The column to check.
      * @param ?string $name Optional name for the on.
      * @return static
      */
-    public function or_on_is_not_null( string $column, ?string $name = null ) {
-        return $this->or_clause_is_not_null( "ons", $column, $name );
+    public function on_null( string $column, ?string $name = null ) {
+        return $this->clause_null( "ons", $column, $name );
+    }
+
+    /**
+     * Add an "or null" on to the query.
+     *
+     * @param string $column The column to check.
+     * @param ?string $name Optional name for the on.
+     * @return static
+     */
+    public function or_on_null( string $column, ?string $name = null ) {
+        return $this->or_clause_null( "ons", $column, $name );
+    }
+
+    /**
+     * Add a "not null" on to the query.
+     *
+     * @param string $column The column to check.
+     * @param ?string $name Optional name for the on.
+     * @return static
+     */
+    public function on_not_null( string $column, ?string $name = null ) {
+        return $this->clause_not_null( "ons", $column, $name );
+    }
+
+    /**
+     * Add an "or not null" on to the query.
+     *
+     * @param string $column The column to check.
+     * @param ?string $name Optional name for the on.
+     * @return static
+     */
+    public function or_on_not_null( string $column, ?string $name = null ) {
+        return $this->or_clause_not_null( "ons", $column, $name );
     }
 
     /**

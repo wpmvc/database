@@ -400,7 +400,7 @@ trait Clause {
     }
 
     /**
-     * Add an "is null" clause to the query.
+     * Add an "null" clause to the query.
      *
      * @param string $clause_type The type of the clause.
      * @param string $column The column to check.
@@ -409,7 +409,7 @@ trait Clause {
      * @param bool $not Whether to negate the is null clause.
      * @return static
      */
-    protected function clause_is_null( string $clause_type, string $column, ?string $name = null, $boolean = 'and', $not = false ) {
+    protected function clause_null( string $clause_type, string $column, ?string $name = null, $boolean = 'and', $not = false ) {
         $type = 'is_null'; // Define the type of the clause
         $data = compact( 'type', 'boolean', 'column', 'not' );
 
@@ -417,38 +417,38 @@ trait Clause {
     }
 
     /**
-     * Add an "or is null" clause to the query.
+     * Add an "or null" clause to the query.
      *
      * @param string $clause_type The type of the clause.
      * @param string $column The column to check.
      * @param ?string $name Optional name for the clause.
      * @return static
      */
-    protected function or_clause_is_null( string $clause_type, string $column, ?string $name = null ) {
-        return $this->clause_is_null( $clause_type, $column, $name, 'or', false );
+    protected function or_clause_null( string $clause_type, string $column, ?string $name = null ) {
+        return $this->clause_null( $clause_type, $column, $name, 'or', false );
     }
 
     /**
-     * Add a "is not null" clause to the query.
+     * Add a "not null" clause to the query.
      *
      * @param string $clause_type The type of the clause.
      * @param string $column The column to check.
      * @param ?string $name Optional name for the clause.
      * @return static
      */
-    protected function clause_is_not_null( string $clause_type, string $column, ?string $name = null ) {
-        return $this->clause_is_null( $clause_type, $column, $name, 'and', true );
+    protected function clause_not_null( string $clause_type, string $column, ?string $name = null ) {
+        return $this->clause_null( $clause_type, $column, $name, 'and', true );
     }
 
     /**
-     * Add an "or is not null" clause to the query.
+     * Add an "or not null" clause to the query.
      *
      * @param string $clause_type The type of the clause.
      * @param string $column The column to check.
      * @param ?string $name Optional name for the clause.
      * @return static
      */
-    protected function or_clause_is_not_null( string $clause_type, string $column, ?string $name = null ) {
-        return $this->clause_is_null( $clause_type, $column, $name, 'or', true );
+    protected function or_clause_not_null( string $clause_type, string $column, ?string $name = null ) {
+        return $this->clause_null( $clause_type, $column, $name, 'or', true );
     }
 }

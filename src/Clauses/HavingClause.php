@@ -218,7 +218,7 @@ trait HavingClause {
         return $this->or_clause_not_like( "havings", $column, $value, $name );
     }
 
-    /**
+     /**
      * Add an "is null" having to the query.
      *
      * @param string $column The column to check.
@@ -226,7 +226,8 @@ trait HavingClause {
      * @return static
      */
     public function having_is_null( string $column, ?string $name = null ) {
-        return $this->clause_is_null( "havings", $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'having_null' );
+        return $this->having_null( $column, $name );
     }
 
     /**
@@ -237,7 +238,8 @@ trait HavingClause {
      * @return static
      */
     public function or_having_is_null( string $column, ?string $name = null ) {
-        return $this->or_clause_is_null( "havings", $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'or_having_null' );
+        return $this->or_having_null( $column, $name );
     }
 
     /**
@@ -248,8 +250,8 @@ trait HavingClause {
      * @return static
      */
     public function having_not_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'having_is_not_null' );
-        return $this->having_is_not_null( $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'having_not_null' );
+        return $this->having_not_null( $column, $name );
     }
 
     /**
@@ -260,30 +262,52 @@ trait HavingClause {
      * @return static
      */
     public function or_having_not_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'or_having_is_not_null' );
-        return $this->or_having_is_not_null( $column, $name );
-    }
-
-     /**
-     * Add a "is not null" having to the query.
-     *
-     * @param string $column The column to check.
-     * @param ?string $name Optional name for the having.
-     * @return static
-     */
-    public function having_is_not_null( string $column, ?string $name = null ) {
-        return $this->clause_is_not_null( "havings", $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'or_having_not_null' );
+        return $this->or_having_not_null( $column, $name );
     }
 
     /**
-     * Add an "or is not null" having to the query.
+     * Add an "null" having to the query.
      *
      * @param string $column The column to check.
      * @param ?string $name Optional name for the having.
      * @return static
      */
-    public function or_having_is_not_null( string $column, ?string $name = null ) {
-        return $this->or_clause_is_not_null( "havings", $column, $name );
+    public function having_null( string $column, ?string $name = null ) {
+        return $this->clause_null( "havings", $column, $name );
+    }
+
+    /**
+     * Add an "or null" having to the query.
+     *
+     * @param string $column The column to check.
+     * @param ?string $name Optional name for the having.
+     * @return static
+     */
+    public function or_having_null( string $column, ?string $name = null ) {
+        return $this->or_clause_null( "havings", $column, $name );
+    }
+
+    /**
+     * Add a "not null" having to the query.
+     *
+     * @param string $column The column to check.
+     * @param ?string $name Optional name for the having.
+     * @return static
+     */
+    public function having_not_null( string $column, ?string $name = null ) {
+        return $this->clause_not_null( "havings", $column, $name );
+    }
+
+    /**
+     * Add an "or not null" having to the query.
+     *
+     * @param string $column The column to check.
+     * @param ?string $name Optional name for the having.
+     * @return static
+     */
+    public function or_having_not_null( string $column, ?string $name = null ) {
+        return $this->or_clause_not_null( "havings", $column, $name );
     }
 
     /**

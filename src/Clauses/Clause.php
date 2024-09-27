@@ -429,26 +429,26 @@ trait Clause {
     }
 
     /**
-     * Add a "not is null" clause to the query.
+     * Add a "is not null" clause to the query.
      *
      * @param string $clause_type The type of the clause.
      * @param string $column The column to check.
      * @param ?string $name Optional name for the clause.
      * @return static
      */
-    protected function clause_not_is_null( string $clause_type, string $column, ?string $name = null ) {
+    protected function clause_is_not_null( string $clause_type, string $column, ?string $name = null ) {
         return $this->clause_is_null( $clause_type, $column, $name, 'and', true );
     }
 
     /**
-     * Add an "or not is null" clause to the query.
+     * Add an "or is not null" clause to the query.
      *
      * @param string $clause_type The type of the clause.
      * @param string $column The column to check.
      * @param ?string $name Optional name for the clause.
      * @return static
      */
-    protected function or_clause_not_is_null( string $clause_type, string $column, ?string $name = null ) {
+    protected function or_clause_is_not_null( string $clause_type, string $column, ?string $name = null ) {
         return $this->clause_is_null( $clause_type, $column, $name, 'or', true );
     }
 }

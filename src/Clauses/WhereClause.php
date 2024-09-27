@@ -248,7 +248,8 @@ trait WhereClause {
      * @return static
      */
     public function where_not_is_null( string $column, ?string $name = null ) {
-        return $this->clause_not_is_null( "wheres", $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'where_is_not_null' );
+        return $this->where_is_not_null( $column, $name );
     }
 
     /**
@@ -259,7 +260,30 @@ trait WhereClause {
      * @return static
      */
     public function or_where_not_is_null( string $column, ?string $name = null ) {
-        return $this->or_clause_not_is_null( "wheres", $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'or_where_is_not_null' );
+        return $this->or_where_is_not_null( $column, $name );
+    }
+
+     /**
+     * Add a "is not null" where to the query.
+     *
+     * @param string $column The column to check.
+     * @param ?string $name Optional name for the where.
+     * @return static
+     */
+    public function where_is_not_null( string $column, ?string $name = null ) {
+        return $this->clause_is_not_null( "wheres", $column, $name );
+    }
+
+    /**
+     * Add an "or is not null" where to the query.
+     *
+     * @param string $column The column to check.
+     * @param ?string $name Optional name for the where.
+     * @return static
+     */
+    public function or_where_is_not_null( string $column, ?string $name = null ) {
+        return $this->or_clause_is_not_null( "wheres", $column, $name );
     }
 
     /**

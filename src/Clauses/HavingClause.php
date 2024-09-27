@@ -248,7 +248,8 @@ trait HavingClause {
      * @return static
      */
     public function having_not_is_null( string $column, ?string $name = null ) {
-        return $this->clause_not_is_null( "havings", $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'having_is_not_null' );
+        return $this->having_is_not_null( $column, $name );
     }
 
     /**
@@ -259,7 +260,30 @@ trait HavingClause {
      * @return static
      */
     public function or_having_not_is_null( string $column, ?string $name = null ) {
-        return $this->or_clause_not_is_null( "havings", $column, $name );
+        _deprecated_function( __FUNCTION__, '1.2.0', 'or_having_is_not_null' );
+        return $this->or_having_is_not_null( $column, $name );
+    }
+
+     /**
+     * Add a "is not null" having to the query.
+     *
+     * @param string $column The column to check.
+     * @param ?string $name Optional name for the having.
+     * @return static
+     */
+    public function having_is_not_null( string $column, ?string $name = null ) {
+        return $this->clause_is_not_null( "havings", $column, $name );
+    }
+
+    /**
+     * Add an "or is not null" having to the query.
+     *
+     * @param string $column The column to check.
+     * @param ?string $name Optional name for the having.
+     * @return static
+     */
+    public function or_having_is_not_null( string $column, ?string $name = null ) {
+        return $this->or_clause_is_not_null( "havings", $column, $name );
     }
 
     /**

@@ -53,7 +53,7 @@ trait Clause {
      * @param string $boolean The boolean operator ('and' or 'or').
      * @return static
      */
-    protected function clause( string $clause_type, $column, $operator = null, $value = null, ?string $name = null, $boolean = 'and' ) {
+    protected function clause( string $clause_type, $column, $operator = null, $value = null, ?string $name = null, $boolean = 'and', bool $not = false ) {
         if ( $column instanceof Closure ) {
             $type = 'nested';
 
@@ -63,7 +63,7 @@ trait Clause {
                 call_user_func( $column, $query );
             }
 
-            $data = compact( 'type', 'boolean', 'query', 'name' );
+            $data = compact( 'type', 'boolean', 'query', 'name', 'not' );
 
         } else {
             // Prepare value and operator for the clause
@@ -75,7 +75,7 @@ trait Clause {
             }
 
             $type = 'basic'; // Define the type of the clause
-            $data = compact( 'type', 'boolean', 'column', 'operator', 'value' );
+            $data = compact( 'type', 'boolean', 'column', 'operator', 'value', 'not' );
         }
     
         return $this->set_clause( $clause_type, $data, $name );
@@ -93,6 +93,34 @@ trait Clause {
      */
     protected function or_clause( string $clause_type, $column, $operator = null, $value = null, ?string $name = null ) {
         return $this->clause( $clause_type, $column, $operator, $value, $name, 'or' );
+    }
+
+    /**
+     * Add an "clause not" to the query.
+     *
+     * @param string $clause_type The type of the clause.
+     * @param (Closure(static): mixed)|static|string $column The column to compare.
+     * @param mixed $operator The operator for comparison.
+     * @param mixed $value The value to compare.
+     * @param ?string $name Optional name for the clause.
+     * @return static
+     */
+    protected function clause_not( string $clause_type, $column, $operator = null, $value = null, ?string $name = null ) {
+        return $this->clause( $clause_type, $column, $operator, $value, $name, 'and', true );
+    }
+
+    /**
+     * Add an "or clause not" to the query.
+     *
+     * @param string $clause_type The type of the clause.
+     * @param (Closure(static): mixed)|static|string $column The column to compare.
+     * @param mixed $operator The operator for comparison.
+     * @param mixed $value The value to compare.
+     * @param ?string $name Optional name for the clause.
+     * @return static
+     */
+    protected function or_clause_not( string $clause_type, $column, $operator = null, $value = null, ?string $name = null ) {
+        return $this->clause( $clause_type, $column, $operator, $value, $name, 'or', true );
     }
 
     /**

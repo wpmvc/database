@@ -53,6 +53,32 @@ trait OnClause {
     }
 
     /**
+     * Add an "on not" to the query.
+     *
+     * @param (Closure(static): mixed)|static|string $column The column to compare.
+     * @param mixed $operator The operator for comparison.
+     * @param mixed $value The value to compare.
+     * @param ?string $name Optional name for the on.
+     * @return static
+     */
+    public function on_not( $column, $operator = null, $value = null, ?string $name = null ) {
+        return $this->clause_not( "ons", $column, $operator, $value, $name );
+    }
+
+    /**
+     * Add an "or on not" to the query.
+     *
+     * @param (Closure(static): mixed)|static|string $column The column to compare.
+     * @param mixed $operator The operator for comparison.
+     * @param mixed $value The value to compare.
+     * @param ?string $name Optional name for the on.
+     * @return static
+     */
+    public function or_on_not( $column, $operator = null, $value = null, ?string $name = null ) {
+        return $this->or_clause_not( "ons", $column, $operator, $value, $name );
+    }
+
+    /**
      * Add a on comparing two columns to the query.
      *
      * @param string $first_column The first column to compare.

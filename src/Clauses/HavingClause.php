@@ -53,6 +53,32 @@ trait HavingClause {
     }
 
     /**
+     * Add an "having not" to the query.
+     *
+     * @param (Closure(static): mixed)|static|string $column The column to compare.
+     * @param mixed $operator The operator for comparison.
+     * @param mixed $value The value to compare.
+     * @param ?string $name Optional name for the having.
+     * @return static
+     */
+    public function having_not( $column, $operator = null, $value = null, ?string $name = null ) {
+        return $this->clause_not( "havings", $column, $operator, $value, $name );
+    }
+
+    /**
+     * Add an "or having not" to the query.
+     *
+     * @param (Closure(static): mixed)|static|string $column The column to compare.
+     * @param mixed $operator The operator for comparison.
+     * @param mixed $value The value to compare.
+     * @param ?string $name Optional name for the having.
+     * @return static
+     */
+    public function or_having_not( $column, $operator = null, $value = null, ?string $name = null ) {
+        return $this->or_clause_not( "havings", $column, $operator, $value, $name );
+    }
+
+    /**
      * Add a having comparing two columns to the query.
      *
      * @param string $first_column The first column to compare.

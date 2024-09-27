@@ -220,7 +220,8 @@ class Compiler {
         foreach ( $items as $where ) {
             switch ( $where['type'] ) {
                 case 'basic':
-                    $where_query .= " {$where['boolean']} {$where['column']} {$where['operator']} {$query->set_binding($where['value'])}";
+                    $basic        = $where['not'] ? "{$where['boolean']} not" : $where['boolean'];
+                    $where_query .= " {$basic} {$where['column']} {$where['operator']} {$query->set_binding($where['value'])}";
                     break;
                 case 'like':
                     $like         = $where['not'] ? 'not like' : 'like';
@@ -286,14 +287,16 @@ class Compiler {
                     if ( ! empty( $nested_items ) ) {
                         $sql = ltrim( $this->compile_where_or_having( $nested_query, $nested_items, $type ), $type );
                         $query->set_bindings( $nested_query->get_bindings() );
-                        $where_query .= " {$where['boolean']} ({$sql} )";
+
+                        $nested       = $where['not'] ? "{$where['boolean']} not" : $where['boolean'];
+                        $where_query .= " {$nested} ({$sql} )";
                     }
             }
         }
 
         $where_query = trim( $this->remove_leading_boolean( $where_query ) );
 
-        if ( in_array( $where_query, ['where', 'having', 'on'], true ) ) {
+        if ( in_array( $where_query, ['where', 'having', 'on', 'where not', 'having not', 'on not'], true ) ) {
             return '';
         }
 

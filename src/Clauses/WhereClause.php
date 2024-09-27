@@ -53,6 +53,32 @@ trait WhereClause {
     }
 
     /**
+     * Add an "where not" to the query.
+     *
+     * @param (Closure(static): mixed)|static|string $column The column to compare.
+     * @param mixed $operator The operator for comparison.
+     * @param mixed $value The value to compare.
+     * @param ?string $name Optional name for the where.
+     * @return static
+     */
+    public function where_not( $column, $operator = null, $value = null, ?string $name = null ) {
+        return $this->clause_not( "wheres", $column, $operator, $value, $name );
+    }
+
+    /**
+     * Add an "or where not" to the query.
+     *
+     * @param (Closure(static): mixed)|static|string $column The column to compare.
+     * @param mixed $operator The operator for comparison.
+     * @param mixed $value The value to compare.
+     * @param ?string $name Optional name for the where.
+     * @return static
+     */
+    public function or_where_not( $column, $operator = null, $value = null, ?string $name = null ) {
+        return $this->or_clause_not( "wheres", $column, $operator, $value, $name );
+    }
+
+    /**
      * Add a where comparing two columns to the query.
      *
      * @param string $first_column The first column to compare.

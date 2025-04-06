@@ -525,17 +525,22 @@ class Builder extends Relationship {
         if ( empty( $this->bindings ) ) {
             return $sql;
         }
+
         global $wpdb;
         /**
          * @var wpdb $wpdb
          */
-        return $wpdb->prepare(
+        $sql_query = $wpdb->prepare(
             $sql, ...array_map( //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 function( $value ) {
                     return $value instanceof DateTime ? $value->format( 'Y-m-d H:i:s' ) : $value;
                 }, $this->bindings
             )
         );
+
+        $this->bindings = [];
+
+        return $sql_query;
     }
 
     /**

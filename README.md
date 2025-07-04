@@ -1,408 +1,469 @@
 <p align="center">
-<a href="https://packagist.org/packages/wpmvc/database"><img src="https://img.shields.io/packagist/dt/wpmvc/database" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/wpmvc/database"><img src="https://img.shields.io/packagist/v/wpmvc/database" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/wpmvc/database"><img src="https://img.shields.io/packagist/l/wpmvc/database" alt="License"></a>
+  <a href="https://packagist.org/packages/wpmvc/database"><img src="https://img.shields.io/packagist/dt/wpmvc/database" alt="Total Downloads"></a>
+  <a href="https://packagist.org/packages/wpmvc/database"><img src="https://img.shields.io/packagist/v/wpmvc/database" alt="Latest Stable Version"></a>
+  <a href="https://packagist.org/packages/wpmvc/database"><img src="https://img.shields.io/packagist/l/wpmvc/database" alt="License"></a>
 </p>
 
-# About WpMVC Database
+# WpMVC Database
 
-WpMVC Database is a robust and versatile SQL query builder designed specifically for WordPress plugins. It provides a similar experience to Laravel's Eloquent Query Builder, a well-known and widely-used PHP framework.
+**WpMVC Database** is a powerful SQL query builder tailored for WordPress plugins, offering a fluent and intuitive interface inspired by Laravel's Eloquent Query Builder. It simplifies database operations, relationships, and schema management for WordPress developers.
 
-- [About WpMVC Database](#about-wpmvc-database)
+---
+
+## Table of Contents
+
 - [Installation](#installation)
-- [Create Eloquent Model](#create-eloquent-model)
-- [Insert Data](#insert-data)
-- [Update Data](#update-data)
-- [Delete Data](#delete-data)
-- [Read Data](#read-data)
+- [Schema Builder](#schema-builder)
+  - [Creating Tables](#creating-tables)
+  - [Altering Tables](#altering-tables)
+  - [Dropping or Renaming Tables](#dropping-or-renaming-tables)
+  - [Returning SQL Queries](#returning-sql-queries)
+  - [Foreign Key Safety](#foreign-key-safety)
+  - [Supported Blueprint Methods](#supported-blueprint-methods)
+- [Eloquent Models](#eloquent-models)
+  - [Creating Models](#creating-models)
+  - [Inserting Data](#inserting-data)
+  - [Updating Data](#updating-data)
+  - [Deleting Data](#deleting-data)
+  - [Reading Data](#reading-data)
 	- [Aggregates](#aggregates)
 	- [Retrieving Models](#retrieving-models)
-		- [All Records](#all-records)
-		- [Single Record](#single-record)
 	- [Select Statements](#select-statements)
-	- [Join](#join)
-		- [Inner Join Clause](#inner-join-clause)
-		- [Left Join / Right Join Clause](#left-join--right-join-clause)
-		- [Advanced Join Clauses](#advanced-join-clauses)
-	- [Basic Where Clauses](#basic-where-clauses)
-		- [Where Clauses](#where-clauses)
-		- [Or Where Clauses](#or-where-clauses)
-	- [Advanced Where Clauses](#advanced-where-clauses)
-		- [Where Exists Clauses](#where-exists-clauses)
-	- [Additional Where Clauses](#additional-where-clauses)
-		- [where\_between / or\_where\_between](#where_between--or_where_between)
-		- [where\_not\_between / or\_where\_not\_between](#where_not_between--or_where_not_between)
-		- [where\_in / where\_not\_in / or\_where\_in / or\_where\_not\_in](#where_in--where_not_in--or_where_in--or_where_not_in)
-	- [Ordering, Grouping, Limit \& Offset](#ordering-grouping-limit--offset)
-		- [Ordering](#ordering)
-			- [The order\_by Method](#the-order_by-method)
-		- [Grouping](#grouping)
-			- [The group\_by \& having Methods](#the-group_by--having-methods)
-		- [Limit \& Offset](#limit--offset)
-			- [The limit \& offset Methods](#the-limit--offset-methods)
+	- [Joins](#joins)
+	- [Where Clauses](#where-clauses)
+	- [Ordering, Grouping, Limit & Offset](#ordering-grouping-limit--offset)
 - [Relationships](#relationships)
-	- [One To One](#one-to-one)
-	- [One To Many](#one-to-many)
-	- [One To Many (Inverse) / Belongs To](#one-to-many-inverse--belongs-to)
-	- [Constraining Query Loads](#constraining-query-loads)
+  - [One-to-One](#one-to-one)
+  - [One-to-Many](#one-to-many)
+  - [One-to-Many (Inverse) / Belongs To](#one-to-many-inverse--belongs-to)
+  - [Constraining Query Loads](#constraining-query-loads)
 - [License](#license)
 
-# Installation
-To install the WpMVC Database package, simply run the following command via Composer:
-```
+---
+
+## Installation
+
+Install WpMVC Database using Composer:
+
+```bash
 composer require wpmvc/database
 ```
 
-# Create Eloquent Model
-To create an Eloquent model, you can use the following code snippet.
-```php
-<?php
+---
 
+## Schema Builder
+
+The Schema Builder provides a fluent interface for creating and modifying database tables.
+
+### Creating Tables
+
+Create a table with the `Schema::create` method:
+
+```php
+use WpMVC\Database\Schema;
+
+Schema::create('products', function (Blueprint $table) {
+	$table->big_increments('id');
+	$table->unsigned_big_integer('category_id');
+	$table->string('title');
+	$table->long_text('description')->nullable();
+	$table->enum('visibility', ['publish', 'draft'])->default('publish');
+	$table->timestamps();
+
+	$table->foreign('category_id')
+		  ->references('id')
+		  ->on('categories')
+		  ->on_delete('cascade');
+});
+```
+
+### Altering Tables
+
+Modify an existing table with `Schema::alter`:
+
+```php
+Schema::alter('products', function (Blueprint $table) {
+	$table->string('short_description')->after('title')->nullable();
+	$table->drop_column('legacy_column');
+	$table->drop_index('index_abc123');
+});
+```
+
+### Dropping or Renaming Tables
+
+Drop or rename tables as needed:
+
+```php
+Schema::drop_if_exists('products');
+Schema::rename('old_products', 'products');
+```
+
+### Returning SQL Queries
+
+Generate SQL without executing it by passing `true` as the third argument:
+
+```php
+$sql = Schema::create('products', function (Blueprint $table) {
+	$table->string('title');
+}, true);
+
+echo $sql;
+```
+
+### Foreign Key Safety
+
+Foreign keys are automatically checked to avoid duplicates. The naming convention is:
+
+```
+fk_{prefix}{table}_{column}
+```
+
+### Example Schema
+
+A complete example for a `products` table:
+
+```php
+Schema::create('products', function (Blueprint $table) {
+	$table->big_increments('id');
+	$table->unsigned_big_integer('category_id');
+	$table->string('title');
+	$table->string('sku')->nullable();
+	$table->long_text('description')->nullable();
+	$table->decimal('price', 10, 2)->default(0.00);
+	$table->boolean('is_active')->default(true);
+	$table->enum('status', ['publish', 'draft'])->default('publish');
+	$table->timestamps();
+
+	$table->index(['status']);
+	$table->foreign('category_id')
+		  ->references('id')
+		  ->on('categories')
+		  ->on_delete('cascade');
+});
+```
+
+### Supported Blueprint Methods
+
+#### Column Types
+- `big_increments(name)`: Auto-incrementing big integer (primary key).
+- `unsigned_big_integer(name)`: Unsigned big integer.
+- `integer(name)`: Signed integer.
+- `unsigned_integer(name)`: Unsigned integer.
+- `string(name, length)`: VARCHAR column with optional length.
+- `text(name)`: TEXT column.
+- `long_text(name)`: LONGTEXT column.
+- `json(name)`: JSON column.
+- `enum(name, values)`: ENUM column with specified values.
+- `tiny_integer(name)`: TINYINT column.
+- `timestamp(name)`: TIMESTAMP column.
+- `timestamps()`: Adds `created_at` and `updated_at` TIMESTAMP columns.
+- `boolean(name)`: BOOLEAN column.
+
+#### Column Modifiers
+- `nullable()`: Allows NULL values.
+- `default(value)`: Sets a default value.
+- `comment(text)`: Adds a column comment.
+- `use_current()`: Sets the default to the current timestamp.
+- `use_current_on_update()`: Updates timestamp on record update.
+- `after(column)`: Places the column after another (only for `ALTER`).
+
+#### Indexes & Constraints
+- `primary(column|[columns])`: Sets primary key.
+- `unique(column|[columns])`: Sets unique index.
+- `index(column|[columns])`: Creates an index.
+- `drop_column(name)`: Drops a column.
+- `drop_index(name)`: Drops an index.
+- `foreign(column)->references()->on()->on_delete()->on_update()`: Defines a foreign key constraint.
+
+---
+
+## Eloquent Models
+
+### Creating Models
+
+Define an Eloquent model by extending the `Model` class:
+
+```php
 namespace WpMVC\App\Models;
 
 use WpMVC\Database\Eloquent\Model;
 use WpMVC\Database\Resolver;
 
 class Post extends Model {
-
-	public static function get_table_name():string {
+	public static function get_table_name(): string {
 		return 'posts';
 	}
 
-	public function resolver():Resolver {
+	public function resolver(): Resolver {
 		return new Resolver;
 	}
 }
 ```
-# Insert Data
-You can insert data into the `posts` table using the query builder provided by Eloquent. Here's an example of how to insert a single item:
+
+### Inserting Data
+
+Insert a single record:
+
 ```php
 Post::query()->insert([
 	'post_author' => wp_get_current_user()->ID,
-	'post_title' => "Test Post"
-	...
+	'post_title' => 'Test Post',
 ]);
-		
 ```
-To insert multiple items at once, simply pass an array of arrays:
+
+Insert multiple records:
 
 ```php
-$post_author = wp_get_current_user()->ID;
-
 Post::query()->insert([
 	[
-		'post_author' => $post_author,
-		'post_title' => "Test Post 1"
-		...
+		'post_author' => wp_get_current_user()->ID,
+		'post_title' => 'Test Post 1',
 	],
 	[
-		'post_author' => $post_author,
-		'post_title' => "Test Post 2"
-		...
-	]
+		'post_author' => wp_get_current_user()->ID,
+		'post_title' => 'Test Post 2',
+	],
 ]);
 ```
 
-You can also insert an item and retrieve its ID in one step using the `insert_get_id` method:
+Insert and retrieve the ID:
 
 ```php
 $post_id = Post::query()->insert_get_id([
 	'post_author' => wp_get_current_user()->ID,
-	'post_title' => "Test Post"
-	// ...
+	'post_title' => 'Test Post',
 ]);
 ```
-# Update Data
-To update a post where the post id is 100, use the following code:
+
+### Updating Data
+
+Update a record based on a condition:
+
 ```php
 Post::query()->where('post_id', 100)->update([
-	'post_title' => "Test Post"
+	'post_title' => 'Updated Post',
 ]);
 ```
-# Delete Data
-To delete a post where the post id is 100, use the following code:
+
+### Deleting Data
+
+Delete a record based on a condition:
+
 ```php
 Post::query()->where('post_id', 100)->delete();
 ```
 
-# Read Data
-To retrieve data, the WpMVC Database offers a variety of methods:
-Get all posts
+### Reading Data
 
-## Aggregates
-The query builder also provides a variety of methods for retrieving aggregate values like `count`, `max`, `min`, `avg`, and `sum`. You may call any of these methods after constructing your query:
+#### Aggregates
+
+Retrieve aggregate values like `count`, `max`, `min`, `avg`, or `sum`:
+
 ```php
-$posts = Post::query()->count();
+$count = Post::query()->count();
 ```
-## Retrieving Models
-### All Records
-To get all the posts, use the `get` method as shown below:
+
+#### Retrieving Models
+
+Fetch all records:
+
 ```php
 $posts = Post::query()->get();
 ```
-### Single Record
-To retrieve a single record from the database, use the `first` method as shown below:
+
+Fetch a single record:
+
 ```php
-$posts = Post::query()->where('id', 100)->first();
+$post = Post::query()->where('id', 100)->first();
 ```
-## Select Statements
-You may not always want to select all columns from a database table. Using the `select` method, you can specify a custom "select" clause for the query:
+
+#### Select Statements
+
+Select specific columns:
+
 ```php
 $posts = Post::query()->select('post_title', 'post_date')->get();
-
 ```
-The `distinct` method allows you to force the query to return distinct results:
+
+Use `distinct` for unique results:
 
 ```php
-$posts = Post::query()->distinct()->select('post_title', 'post_date')->get();
+$posts = Post::query()->distinct()->select('post_title')->get();
 ```
-## Join
 
-### Inner Join Clause
-To add join clauses to your SQL queries using the query builder, you can use the `join` method. This method is used to perform an inner join between two or more database tables. The first argument passed to the `join` method is the name of the table you want to join, and the remaining arguments specify the column constraints for the join.
-```php
-$users = User::query()
-                ->join('contacts', 'users.id', '=', 'contacts.user_id')
-                ->select('users.*', 'contacts.phone', 'contacts.email')
-                ->get();
-```
-In this example, we are joining the `users` table with the contacts table on the id column of `users` and the `user_id` column of `contacts`. We are also selecting all columns from users and the `phone` and `email` columns from `contacts`.
+#### Joins
 
-You can even join multiple tables in a single query using the `join` method multiple times. For example:
+Perform an inner join:
 
 ```php
 $users = User::query()
-                ->join('contacts', 'users.id', '=', 'contacts.user_id')
-                ->join('orders', 'users.id', '=', 'orders.user_id')
-                ->select('users.*', 'contacts.phone', 'orders.price')
-                ->get();
-
+	->join('contacts', 'users.id', '=', 'contacts.user_id')
+	->select('users.*', 'contacts.phone', 'contacts.email')
+	->get();
 ```
-In this example, we are joining the `users` table with the `contacts` table and the `orders` table. We are selecting all columns from `users`, the phone column from `contacts`, and the price column from `orders`.
 
-Here is an example of how to use the join method to join two tables:
+Perform left or right joins:
 
-### Left Join / Right Join Clause
-To perform a "left join" or "right join" instead of an "inner join", you can use the `left_join` or `right_join` methods respectively. These methods have the same signature as the `join` method, which means that you need to pass the name of the table you want to join as the first argument, and then specify the column constraints for the join as the remaining arguments.
-
-For example, to perform a "left join" on the `users` and `posts` tables using the `user_id` column as the join constraint, you can do the following:
 ```php
 $users = User::query()
-            ->left_join('posts', 'users.id', '=', 'posts.user_id')
-            ->get();
+	->left_join('posts', 'users.id', '=', 'posts.user_id')
+	->get();
 ```
 
-This will return all the rows from the `users` table along with their matching rows from the `posts` table based on the `user_id` column. If a user has no matching posts, the values from the `posts` table will be `NULL`.
+Advanced join with a closure:
 
-Similarly, to perform a "right join" on the users and `posts` tables using the `user_id` column as the join constraint, you can do the following:
-```php
-$users = User::query()
-            ->right_join('posts', 'users.id', '=', 'posts.user_id')
-            ->get();
-
-```
-This will return all the rows from the `posts` table along with their matching rows from the `users` table based on the `user_id` column. If a post has no matching user, the values from the `users` table will be NULL.
-
-### Advanced Join Clauses
-You may also specify more advanced join clauses. To get started, pass a closure as the second argument to the `join` method. The closure will receive a `WpMVC\Database\Query\JoinClause` instance which allows you to specify constraints on the "join" clause:
 ```php
 use WpMVC\Database\Query\JoinClause;
 
 $posts = Post::query()->join('postmeta', function (JoinClause $join) {
-	$join->on('postmeta.post_id', '=', 'posts.ID')->orOn(/* ... */);
+	$join->on('postmeta.post_id', '=', 'posts.ID')
+		 ->where('postmeta.meta_value', '>', 500);
 })->get();
 ```
-If you would like to use a "where" clause on your joins, you may use the `where` and `or_where` methods provided by the JoinClause instance. Instead of comparing two columns, these methods will compare the column against a value:
-```php
-$posts = Post::query()->join('postmeta', function (JoinClause $join) {
-	$join->on('postmeta.post_id', '=', 'posts.ID')->where('postmeta.meta_value', '>', 500);
-})->get();
-```
-## Basic Where Clauses
 
-### Where Clauses
-To get only published posts, use the `where` method as shown below:
+#### Where Clauses
+
+Basic where clause:
 
 ```php
 $posts = Post::query()->where('post_status', 'publish')->get();
 ```
-### Or Where Clauses
-To get only published posts or if post_title is test post, use the `where` method as shown below:
+
+Or where clause:
 
 ```php
-$posts = Post::query()->where('post_status', 'publish')->orWhere('post_title', 'test post')->get();
+$posts = Post::query()
+	->where('post_status', 'publish')
+	->orWhere('post_title', 'Test Post')
+	->get();
 ```
 
-## Advanced Where Clauses
-### Where Exists Clauses
+Where exists clause:
 
-The `where_exists` and `where_column` methods are useful when you need to retrieve data from two different tables that have a common column.
+```php
+$posts = Post::query()->where_exists(function (Builder $query) {
+	$query->select(1)
+		  ->from('postmeta')
+		  ->where_column('postmeta.post_id', 'posts.id')
+		  ->limit(1);
+})->get();
+```
 
-To get all posts if the post has meta data, you can use either of the following two processes:
+Where between:
 
-1. Process One: In this process, we use a closure function to define a subquery that selects `1` from the `postmeta` table where the `post_id` column in `postmeta` table is equal to the `ID` column in the `posts` table. The closure function is passed as an argument to the `where_exists` method to filter the posts.
-	```php
-	$posts = Post::query()->where_exists(function(Builder $query) {
-		$query->select(1)->from('postmeta')->where_column('postmeta.post_id', 'posts.id')->limit(1);
-	})->get();
-	```
-
-2. Alternatively Process: In this process, we first define a variable `$post_meta` that selects `1` from the `postmeta` table where the `post_id` column in `postmeta` table is equal to the `ID` column in the `posts` table. Then we use the `where_exists` method and pass the `$post_meta` variable as an argument to filter the posts.
-	```php
-	$post_meta = PostMeta::query()->select(1)->where_column('postmeta.post_id', 'posts.id')->limit(1);
-	$posts     = Post::query()->where_exists($post_meta)->get();
-	```
-In both of these processes, we use the `where_column` method to specify the column names in the two tables that should be compared. This allows us to filter the posts based on whether or not they have meta data.
-
-## Additional Where Clauses
-
-### where_between / or_where_between
-
-The `where_between` method verifies that a column's value is between two values:
 ```php
 $posts = Post::query()->where_between('ID', [1, 100])->get();
 ```
 
-### where_not_between / or_where_not_between
-The `where_not_between` method verifies that a column's value lies outside of two values:
-```php
-$posts = Post::query()->where_not_between('ID', [1, 100])->get();
-```
-### where_in / where_not_in / or_where_in / or_where_not_in
-The `where_in` method verifies that a given column's value is contained within the given array:
+Where in:
 
 ```php
 $posts = Post::query()->where_in('ID', [100, 105])->get();
 ```
 
-The `where_not_in` method verifies that the given column's value is not contained in the given array:
-```php
-$posts = Post::query()->where_not_in('ID', [100, 105])->get();
-```
+#### Ordering, Grouping, Limit & Offset
 
-## Ordering, Grouping, Limit & Offset
-### Ordering
-#### The order_by Method
-The `order_by` method allows you to sort the results of the query by a given column. The first argument accepted by the `order_by` method should be the column you wish to sort by, while the second argument determines the direction of the sort and may be either `asc` or `desc`:
-```php
-$posts = Post::query()->order_by('post_title')->get();
-```
-To sort by multiple columns, you may simply invoke `order_by` as many times as necessary:
+Order results:
 
 ```php
-$posts = Post::query()->order_by('post_title')->order_by_desc('post_status')->get();
+$posts = Post::query()->order_by('post_title', 'asc')->get();
 ```
-### Grouping
-#### The group_by & having Methods
-As you might expect, the `group_by` and `having` methods may be used to group the query results. The `having` method's signature is similar to that of the `where` method:
+
+Group results:
+
 ```php
-$posts = Post::query()->group_by('post_author')->having('post_author', '>', 100)->get();
-
+$posts = Post::query()
+	->group_by('post_author')
+	->having('post_author', '>', 100)
+	->get();
 ```
-### Limit & Offset
-#### The limit & offset Methods
 
-You may use the `limit` and `offset` methods to limit the number of results returned from the query or to skip a given number of results in the query:
+Limit and offset:
+
 ```php
 $posts = Post::query()->offset(10)->limit(5)->get();
 ```
-# Relationships
-Database tables are often related to one another. For example, a blog post may have many comments or an order could be related to the user who placed it. Eloquent makes managing and working with these relationships easy, and supports a variety of common relationships:
 
-## One To One
-A one-to-one relationship is a very basic type of database relationship. For example, a `User` model might be associated with one `Phone` model. To define this relationship, we will place a `Phone` method on the `User` model. The `Phone` method should call the `has_one` method and return its result. The `has_one` method is available to your model via the model's `WpMVC\Database\Eloquent\Model` base class:
+---
+
+## Relationships
+
+WpMVC Database supports common Eloquent relationships for managing related data.
+
+### One-to-One
+
+Define a one-to-one relationship (e.g., a `User` has one `Phone`):
+
 ```php
-<?php
-
 namespace WpMVC\App\Models;
 
 use WpMVC\Database\Eloquent\Model;
 use WpMVC\Database\Eloquent\Relations\HasOne;
 
 class User extends Model {
-
-	/**
-     * Get the phone associated with the user.
-     */
-    public function phone(): HasOne
-    {
-        return $this->has_one(Phone::class, 'ID', 'user_id');
-    }
+	public function phone(): HasOne {
+		return $this->has_one(Phone::class, 'ID', 'user_id');
+	}
 }
 ```
-Eloquent assumes that the foreign key should have a value matching the primary key column of the parent. In other words, Eloquent will look for the value of the user's `ID` column in the `user_id` column of the `Phone` record.
 
-Now, let's retrieve all Users and their phone:
+Retrieve users with their phones:
 
 ```php
 $users = User::query()->with('phone')->get();
 ```
 
-## One To Many
-A one-to-many relationship is used to define relationships where a single model is the parent to one or more child models. For example, a blog post may have an infinite number of meta. Like all other Eloquent relationships, one-to-many relationships are defined by defining a method on your Eloquent model:
-```php
-<?php
+### One-to-Many
 
+Define a one-to-many relationship (e.g., a `Post` has many `PostMeta`):
+
+```php
 namespace WpMVC\App\Models;
 
 use WpMVC\Database\Eloquent\Model;
 use WpMVC\Database\Eloquent\Relations\HasMany;
 
 class Post extends Model {
-
-	/**
-     * Get the all meta associated with the user.
-     */
-    public function meta(): HasMany
-    {
-        return $this->has_many(PostMeta::class, 'ID', 'post_id');
-    }
+	public function meta(): HasMany {
+		return $this->has_many(PostMeta::class, 'ID', 'post_id');
+	}
 }
 ```
-## One To Many (Inverse) / Belongs To
 
-Now that we can access all of a post's meta, let's define a relationship to allow a meta to access its parent post. To define the inverse of a has_many relationship, define a relationship method on the child model which calls the belongs_to_one method:
+### One-to-Many (Inverse) / Belongs To
+
+Define the inverse relationship (e.g., a `PostMeta` belongs to a `Post`):
+
 ```php
-<?php
-
 namespace WpMVC\App\Models;
 
 use WpMVC\Database\Eloquent\Model;
 use WpMVC\Database\Eloquent\Relations\BelongsToOne;
 
 class PostMeta extends Model {
-
-	/**
-     * Get the post that owns the meta.
-     */
-    public function post(): BelongsToOne
-    {
-        return $this->belongs_to_one(Post::class, 'post_id', 'ID');
-    }
+	public function post(): BelongsToOne {
+		return $this->belongs_to_one(Post::class, 'post_id', 'ID');
+	}
 }
 ```
 
-## Constraining Query Loads
-Sometimes you may wish to a relationship but also specify additional query conditions for the relationship query. You can accomplish this by passing an array of relationships to the with method where the array key is a relationship name and the array value is a closure that adds additional constraints to the relationship query:
+### Constraining Query Loads
+
+Add conditions to relationship queries:
+
 ```php
 use WpMVC\Database\Query\Builder;
 
-$posts = Post::query()->with('meta', function(Builder $query) {
-	$query->where('meta_id', 672);
-})->get();
-```
-
-In `with` method you can pass array for multiple relationship
-
-```php
 $posts = Post::query()->with([
-			'meta' => function (Builder $query) {
-				$query->where('meta_id', 672);
-			},
-			'user'
-		])->get();
+	'meta' => function (Builder $query) {
+		$query->where('meta_id', 672);
+	},
+	'user',
+])->get();
 ```
 
-# License
+---
 
-WpMVC Database is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## License
+
+WpMVC Database is open-source software licensed under the [MIT License](https://opensource.org/licenses/MIT).

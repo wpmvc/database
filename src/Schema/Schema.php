@@ -136,7 +136,7 @@ class Schema {
             $ref_column = $fk->get_reference_column();
             $on_delete  = $fk->get_on_delete();
             $on_update  = $fk->get_on_update();
-            $constraint = "fk_{$wpdb->prefix}{$table_name}_{$column}";
+            $constraint = "fk_{$table_name}_{$column}";
 
             /**
              * Checks if a specific foreign key constraint exists on a given table.
@@ -150,7 +150,7 @@ class Schema {
                 AND TABLE_NAME = %s
                 AND CONSTRAINT_NAME = %s",
                     DB_NAME,
-                    $wpdb->prefix . $table_name,
+                    $table_name,
                     $constraint
                 )
             );
@@ -158,7 +158,7 @@ class Schema {
             if ( empty( $exists ) ) {
                 $alter_sql = sprintf(
                     "ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES %s(`%s`)%s%s;",
-                    $wpdb->prefix . $table_name,
+                    $table_name,
                     $constraint,
                     $column,
                     $reference,

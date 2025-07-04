@@ -63,11 +63,12 @@ class ForeignKey {
     /**
      * Set the referenced table in the foreign key constraint.
      *
-     * @param string $reference_table The referenced table name.
+     * @param string $reference_table The referenced table name (without prefix).
      * @return self
      */
     public function on( string $reference_table ): self {
-        $this->reference_table = $reference_table;
+        global $wpdb;
+        $this->reference_table =  $wpdb->prefix . $reference_table;
         return $this;
     }
 

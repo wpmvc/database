@@ -84,6 +84,19 @@ class Blueprint {
     }
 
     /**
+     * Add a DECIMAL column.
+     *
+     * @param string $name
+     * @param int $precision
+     * @param int $scale
+     * @return self
+     */
+    public function decimal( string $name, int $precision = 10, int $scale = 2 ): self {
+        $this->add_column( "`$name` DECIMAL($precision, $scale) NOT NULL" );
+        return $this;
+    }
+
+    /**
      * Add a VARCHAR column.
      *
      * @param string $name

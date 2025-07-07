@@ -149,6 +149,7 @@ Schema::create('products', function (Blueprint $table) {
 - `unsigned_big_integer(name)`: Unsigned big integer.
 - `integer(name)`: Signed integer.
 - `unsigned_integer(name)`: Unsigned integer.
+- `decimal(name, precision, scale)`: DECIMAL column with optional precision and scale (default: `10, 2`).
 - `string(name, length)`: VARCHAR column with optional length.
 - `text(name)`: TEXT column.
 - `long_text(name)`: LONGTEXT column.

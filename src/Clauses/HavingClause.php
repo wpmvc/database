@@ -244,54 +244,6 @@ trait HavingClause {
         return $this->or_clause_not_like( "havings", $column, $value, $name );
     }
 
-     /**
-     * Add an "is null" having to the query.
-     *
-     * @param string $column The column to check.
-     * @param ?string $name Optional name for the having.
-     * @return static
-     */
-    public function having_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'having_null' );
-        return $this->having_null( $column, $name );
-    }
-
-    /**
-     * Add an "or is null" having to the query.
-     *
-     * @param string $column The column to check.
-     * @param ?string $name Optional name for the having.
-     * @return static
-     */
-    public function or_having_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'or_having_null' );
-        return $this->or_having_null( $column, $name );
-    }
-
-    /**
-     * Add a "not is null" having to the query.
-     *
-     * @param string $column The column to check.
-     * @param ?string $name Optional name for the having.
-     * @return static
-     */
-    public function having_not_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'having_not_null' );
-        return $this->having_not_null( $column, $name );
-    }
-
-    /**
-     * Add an "or not is null" having to the query.
-     *
-     * @param string $column The column to check.
-     * @param ?string $name Optional name for the having.
-     * @return static
-     */
-    public function or_having_not_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'or_having_not_null' );
-        return $this->or_having_not_null( $column, $name );
-    }
-
     /**
      * Add an "null" having to the query.
      *

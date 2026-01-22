@@ -245,54 +245,6 @@ trait WhereClause {
     }
 
     /**
-     * Add an "is null" where to the query.
-     *
-     * @param string $column The column to check.
-     * @param ?string $name Optional name for the where.
-     * @return static
-     */
-    public function where_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'where_null' );
-        return $this->where_null( $column, $name );
-    }
-
-    /**
-     * Add an "or is null" where to the query.
-     *
-     * @param string $column The column to check.
-     * @param ?string $name Optional name for the where.
-     * @return static
-     */
-    public function or_where_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'or_where_null' );
-        return $this->or_where_null( $column, $name );
-    }
-
-    /**
-     * Add a "not is null" where to the query.
-     *
-     * @param string $column The column to check.
-     * @param ?string $name Optional name for the where.
-     * @return static
-     */
-    public function where_not_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'where_not_null' );
-        return $this->where_not_null( $column, $name );
-    }
-
-    /**
-     * Add an "or not is null" where to the query.
-     *
-     * @param string $column The column to check.
-     * @param ?string $name Optional name for the where.
-     * @return static
-     */
-    public function or_where_not_is_null( string $column, ?string $name = null ) {
-        _deprecated_function( __FUNCTION__, '1.2.0', 'or_where_not_null' );
-        return $this->or_where_not_null( $column, $name );
-    }
-
-    /**
      * Add an "null" where to the query.
      *
      * @param string $column The column to check.

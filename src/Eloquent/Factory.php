@@ -424,7 +424,9 @@ abstract class Factory {
                     // Interrogate relation for related model
                     try {
                         $ref = new \ReflectionProperty( $relation_obj, 'related' );
-                        $ref->setAccessible( true );
+                        if ( \PHP_VERSION_ID < 80100 ) {
+                            $ref->setAccessible( true );
+                        }
                         $related_model = $ref->getValue( $relation_obj );
                         $factory       = static::new_factory_for_model( get_class( $related_model ) );
                         $count         = $parameters[0] ?? null;
@@ -538,7 +540,9 @@ abstract class Factory {
                     // We use reflection because the property is protected in WpMVC base Relations
                     try {
                         $ref = new \ReflectionProperty( $relation_obj, 'foreign_key' );
-                        $ref->setAccessible( true );
+                        if ( \PHP_VERSION_ID < 80100 ) {
+                            $ref->setAccessible( true );
+                        }
                         $foreign_key = $ref->getValue( $relation_obj );
                     } catch ( \Exception $e ) {
                         // Fallback to default
@@ -591,7 +595,9 @@ abstract class Factory {
                         // Simple belongsTo - try to find the foreign key
                         try {
                             $ref = new \ReflectionProperty( $relation_obj, 'foreign_key' );
-                            $ref->setAccessible( true );
+                            if ( \PHP_VERSION_ID < 80100 ) {
+                                $ref->setAccessible( true );
+                            }
                             $foreign_key = $ref->getValue( $relation_obj );
                         } catch ( \Exception $e ) {
                             // Fallback

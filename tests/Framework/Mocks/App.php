@@ -6,7 +6,7 @@ namespace WpMVC;
  * Mock App class for testing database package in isolation.
  */
 class App {
-    public static $config;
+    protected static $config;
 
     public static function boot() {
         self::$config = new class {
@@ -14,6 +14,10 @@ class App {
                 return $default ?: 'wpmvc';
             }
         };
+    }
+
+    public static function get_config() {
+        return self::$config;
     }
 }
 

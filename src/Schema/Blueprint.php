@@ -1,9 +1,23 @@
 <?php
+/**
+ * Database table blueprint class.
+ *
+ * @package WpMVC\Database
+ * @author  WpMVC
+ * @license MIT
+ */
 
 namespace WpMVC\Database\Schema;
 
 defined( "ABSPATH" ) || exit;
 
+/**
+ * Class Blueprint
+ *
+ * Allows for fluent definition of database tables and columns.
+ *
+ * @package WpMVC\Database\Schema
+ */
 class Blueprint {
     protected string $table_name;
 
@@ -62,6 +76,17 @@ class Blueprint {
     }
 
     /**
+     * Add a BIGINT column.
+     *
+     * @param string $name
+     * @return self
+     */
+    public function big_integer( string $name ): self {
+        $this->add_column( "`$name` BIGINT NOT NULL" );
+        return $this;
+    }
+
+    /**
      * Add an INT column.
      *
      * @param string $name
@@ -93,6 +118,17 @@ class Blueprint {
      */
     public function decimal( string $name, int $precision = 10, int $scale = 2 ): self {
         $this->add_column( "`$name` DECIMAL($precision, $scale) NOT NULL" );
+        return $this;
+    }
+
+    /**
+     * Add a FLOAT column.
+     *
+     * @param string $name
+     * @return self
+     */
+    public function float( string $name ): self {
+        $this->add_column( "`$name` FLOAT NOT NULL" );
         return $this;
     }
 
@@ -149,7 +185,7 @@ class Blueprint {
      * @return self
      */
     public function enum( string $name, array $values ): self {
-        $enum_values = implode( "','", $values );
+        $enum_values = implode( "','", array_map( 'esc_sql', $values ) );
         $this->add_column( "`$name` ENUM('$enum_values') NOT NULL" );
         return $this;
     }
@@ -177,7 +213,31 @@ class Blueprint {
     }
 
     /**
+     * Add a DATE column.
+     *
+     * @param string $name
+     * @return self
+     */
+    public function date( string $name ): self {
+        $this->add_column( "`$name` DATE NOT NULL" );
+        return $this;
+    }
+
+    /**
+     * Add a DATETIME column.
+     *
+     * @param string $name
+     * @return self
+     */
+    public function datetime( string $name ): self {
+        $this->add_column( "`$name` DATETIME NOT NULL" );
+        return $this;
+    }
+
+    /**
      * Add created_at and updated_at TIMESTAMP columns.
+     *
+     * @return void
      */
     public function timestamps(): void {
         $this->timestamp( 'created_at' )->use_current();
@@ -202,7 +262,7 @@ class Blueprint {
      */
     public function nullable(): self {
         $index                 = count( $this->columns ) - 1;
-        $this->columns[$index] = str_replace( 'NOT NULL', 'NULL', $this->columns[$index] );
+        $this->columns[$index] = str_ireplace( ' NOT NULL', ' NULL', $this->columns[$index] );
         return $this;
     }
 
@@ -213,8 +273,13 @@ class Blueprint {
      * @return self
      */
     public function default( $value ): self {
-        $index                  = count( $this->columns ) - 1;
-        $value                  = is_numeric( $value ) ? $value : "'$value'";
+        $index = count( $this->columns ) - 1;
+        
+        if ( is_bool( $value ) ) {
+            $value = $value ? 1 : 0;
+        }
+        
+        $value                  = is_numeric( $value ) ? $value : "'" . esc_sql( $value ) . "'";
         $this->columns[$index] .= " DEFAULT $value";
         return $this;
     }
@@ -227,7 +292,7 @@ class Blueprint {
      */
     public function comment( string $text ): self {
         $index                  = count( $this->columns ) - 1;
-        $this->columns[$index] .= " COMMENT '$text'";
+        $this->columns[$index] .= " COMMENT '" . esc_sql( $text ) . "'";
         return $this;
     }
 
@@ -266,9 +331,10 @@ class Blueprint {
     }
 
     /**
-     * Drop a column.
+     * Drop a column from the table.
      *
-     * @param string $name
+     * @param  string  $name
+     * @return void
      */
     public function drop_column( string $name ): void {
         $this->drops[] = "DROP COLUMN `$name`";
@@ -284,13 +350,14 @@ class Blueprint {
     }
 
     /**
-     * Add a primary key.
+     * Add a primary key to the table.
      *
-     * @param string|array $columns
+     * @param  string|array  $columns
+     * @return void
      */
     public function primary( $columns ): void {
         $cols            = $this->wrap_column_list( $columns );
-        $this->indexes[] = "PRIMARY KEY ($cols)";
+        $this->indexes[] = "PRIMARY KEY  ($cols)";
     }
 
     /**

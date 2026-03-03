@@ -1,4 +1,11 @@
 <?php
+/**
+ * Join clause class.
+ *
+ * @package WpMVC\Database
+ * @author  WpMVC
+ * @license MIT
+ */
 
 namespace WpMVC\Database\Query;
 
@@ -7,6 +14,13 @@ defined( "ABSPATH" ) || exit;
 use WpMVC\Database\Clauses\OnClause;
 use WpMVC\Database\Eloquent\Model;
 
+/**
+ * Class JoinClause
+ *
+ * Represents a JOIN clause in a query builder.
+ *
+ * @package WpMVC\Database\Query
+ */
 class JoinClause extends Builder {
 
     use OnClause;
@@ -27,15 +41,16 @@ class JoinClause extends Builder {
 
     /**
      * Create a new join clause instance.
-     * 
+     *
      * @param  string  $table
      * @param  string  $type
+     * @param  Model   $model
      * @return void
      */
     public function __construct( string $table, string $type, Model $model ) {
         parent::__construct( $model );
-        $table = explode( ' as ', $table );
-        $this->from( $table[0], isset( $table[1] ) ? $table[1] : null );
+        $parts = preg_split( '/\s+as\s+/i', $table );
+        $this->from( $parts[0], isset( $parts[1] ) ? $parts[1] : null );
         $this->type =  $type;
     }
 }

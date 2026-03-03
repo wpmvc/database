@@ -1,12 +1,71 @@
 <?php
+/**
+ * Database schema class.
+ *
+ * @package WpMVC\Database
+ * @author  WpMVC
+ * @license MIT
+ */
 
 namespace WpMVC\Database\Schema;
 
 defined( "ABSPATH" ) || exit;
 
 use wpdb;
+use Closure;
+use WpMVC\Database\Resolver;
 
+/**
+ * Class Schema
+ *
+ * Provides static methods for managing database schema (tables and columns).
+ *
+ * @package WpMVC\Database\Schema
+ */
 class Schema {
+    /**
+     * Checks if a table exists in the database.
+     *
+     * @param string $table_name The name of the table (without prefix).
+     * @return bool
+     */
+    public static function has_table( string $table_name ): bool {
+        global $wpdb;
+        $resolver        = new Resolver();
+        $full_table_name = $resolver->table( $table_name );
+
+        $suppress = $wpdb->suppress_errors();
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $wpdb->get_results( "SELECT 1 FROM `{$full_table_name}` LIMIT 1" );
+        $wpdb->suppress_errors( $suppress );
+
+        return empty( $wpdb->last_error );
+    }
+
+    /**
+     * Checks if a column exists in a given table.
+     *
+     * @param string $table_name The name of the table (without prefix).
+     * @param string $column     The name of the column.
+     * @return bool
+     */
+    public static function has_column( string $table_name, string $column ): bool {
+        global $wpdb;
+        $resolver        = new Resolver();
+        $full_table_name = $resolver->table( $table_name );
+        
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $results = $wpdb->get_results( "DESCRIBE `{$full_table_name}`" );
+        
+        foreach ( $results as $row ) {
+            // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+            if ( $row->Field === $column ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Creates a new database table with the specified name and schema definition.
      *
@@ -27,29 +86,26 @@ class Schema {
          */
         global $wpdb;
 
-        $table_name      = $wpdb->prefix . $table_name;
+        $resolver        = new Resolver();
+        $full_table_name = $resolver->table( $table_name );
         $charset_collate = $wpdb->get_charset_collate();
 
-        $blueprint = new Blueprint( $table_name, $charset_collate );
+        $blueprint = new Blueprint( $full_table_name, $charset_collate );
         $callback( $blueprint );
         $sql = $blueprint->to_sql();
 
         if ( $return ) return $sql;
 
-        if ( ! function_exists( 'dbDelta' ) ) {
-            require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-        }
-    
-        dbDelta( $sql );
+        // Use direct query instead of dbDelta for more reliable creation in tests
+        // and to bypass some of dbDelta's strict formatting requirements.
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $wpdb->query( $sql );
+
         self::apply_foreign_keys( $table_name, $blueprint->get_foreign_keys() );
     }
 
     /**
      * Drops a database table if it exists.
-     *
-     * Constructs and executes a SQL statement to drop the specified table,
-     * using the WordPress database prefix. If the $return parameter is true,
-     * the SQL statement is returned instead of being executed.
      *
      * @param string $table_name The name of the table to drop (without prefix).
      * @param bool   $return     Optional. Whether to return the SQL statement instead of executing it. Default false.
@@ -57,8 +113,27 @@ class Schema {
      */
     public static function drop_if_exists( string $table_name, bool $return = false ) {
         global $wpdb;
-        $full_table_name = $wpdb->prefix . $table_name;
+        $resolver        = new Resolver();
+        $full_table_name = $resolver->table( $table_name );
         $sql             = "DROP TABLE IF EXISTS `{$full_table_name}`;";
+        if ( $return ) return $sql;
+
+        //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $wpdb->query( $sql );
+    }
+
+    /**
+     * Drops a database table.
+     *
+     * @param string $table_name The name of the table to drop (without prefix).
+     * @param bool   $return     Optional. Whether to return the SQL statement instead of executing it. Default false.
+     * @return string|null       The SQL statement if $return is true, otherwise null.
+     */
+    public static function drop( string $table_name, bool $return = false ) {
+        global $wpdb;
+        $resolver        = new Resolver();
+        $full_table_name = $resolver->table( $table_name );
+        $sql             = "DROP TABLE `{$full_table_name}`;";
         if ( $return ) return $sql;
 
         //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -75,9 +150,10 @@ class Schema {
      */
     public static function rename( string $from, string $to, bool $return = false ) {
         global $wpdb;
-        $from_table = $wpdb->prefix . $from;
-        $to_table   = $wpdb->prefix . $to;
-        $sql        = "RENAME TABLE `{$from_table}` TO `{$to_table}`;";
+        $resolver   = new Resolver();
+        $from_table = $resolver->table( $from );
+        $to_table   = $resolver->table( $to );
+        $sql        = "ALTER TABLE `{$from_table}` RENAME TO `{$to_table}`;";
         if ( $return ) return $sql;
 
         //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
@@ -94,7 +170,8 @@ class Schema {
      */
     public static function alter( string $table_name, callable $callback, bool $return = false ) {
         global $wpdb;
-        $full_table_name = $wpdb->prefix . $table_name;
+        $resolver        = new Resolver();
+        $full_table_name = $resolver->table( $table_name );
         $charset_collate = $wpdb->get_charset_collate();
 
         $blueprint = new Blueprint( $full_table_name, $charset_collate );
@@ -138,6 +215,9 @@ class Schema {
             $on_update  = $fk->get_on_update();
             $constraint = "fk_{$table_name}_{$column}";
 
+            $resolver   = new Resolver();
+            $full_table = $resolver->table( $table_name );
+
             /**
              * Checks if a specific foreign key constraint exists on a given table.
              */
@@ -150,15 +230,15 @@ class Schema {
                 AND TABLE_NAME = %s
                 AND CONSTRAINT_NAME = %s",
                     DB_NAME,
-                    $table_name,
+                    $full_table,
                     $constraint
                 )
             );
 
             if ( empty( $exists ) ) {
                 $alter_sql = sprintf(
-                    "ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES %s(`%s`)%s%s;",
-                    $table_name,
+                    "ALTER TABLE `%s` ADD CONSTRAINT `%s` FOREIGN KEY (`%s`) REFERENCES `%s`(`%s`)%s%s;",
+                    $full_table,
                     $constraint,
                     $column,
                     $reference,

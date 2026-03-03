@@ -1,9 +1,25 @@
 <?php
+/**
+ * Where clause handling trait.
+ *
+ * @package WpMVC\Database
+ * @author  WpMVC
+ * @license MIT
+ */
 
 namespace WpMVC\Database\Clauses;
 
 defined( "ABSPATH" ) || exit;
 
+use Closure;
+
+/**
+ * Trait WhereClause
+ *
+ * Provides methods for adding WHERE clauses to the query builder.
+ *
+ * @package WpMVC\Database\Clauses
+ */
 trait WhereClause {
     use Clause;
 
@@ -156,7 +172,7 @@ trait WhereClause {
      * @param ?string $name Optional name for the where.
      * @return static
      */
-    public function where_in( string $column, array $values, ?string $name = null ) {
+    public function where_in( string $column, $values, ?string $name = null ) {
         return $this->clause_in( "wheres", $column, $values, $name );
     }
 
@@ -168,7 +184,7 @@ trait WhereClause {
      * @param ?string $name Optional name for the where.
      * @return static
      */
-    public function or_where_in( string $column, array $values, ?string $name = null ) {
+    public function or_where_in( string $column, $values, ?string $name = null ) {
         return $this->or_clause_in( "wheres", $column, $values, $name );
     }
 
@@ -180,7 +196,7 @@ trait WhereClause {
      * @param ?string $name Optional name for the where.
      * @return static
      */
-    public function where_not_in( string $column, array $values, ?string $name = null ) {
+    public function where_not_in( string $column, $values, ?string $name = null ) {
         return $this->clause_not_in( "wheres", $column, $values, $name );
     }
 
@@ -192,7 +208,7 @@ trait WhereClause {
      * @param ?string $name Optional name for the where.
      * @return static
      */
-    public function or_where_not_in( string $column, array $values, ?string $name = null ) {
+    public function or_where_not_in( string $column, $values, ?string $name = null ) {
         return $this->or_clause_not_in( "wheres", $column, $values, $name );
     }
 

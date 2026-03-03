@@ -1,9 +1,25 @@
 <?php
+/**
+ * Having clause handling trait.
+ *
+ * @package WpMVC\Database
+ * @author  WpMVC
+ * @license MIT
+ */
 
 namespace WpMVC\Database\Clauses;
 
 defined( "ABSPATH" ) || exit;
 
+use Closure;
+
+/**
+ * Trait HavingClause
+ *
+ * Provides methods for adding HAVING clauses to the query builder.
+ *
+ * @package WpMVC\Database\Clauses
+ */
 trait HavingClause {
     use Clause;
 
@@ -156,7 +172,7 @@ trait HavingClause {
      * @param ?string $name Optional name for the having.
      * @return static
      */
-    public function having_in( string $column, array $values, ?string $name = null ) {
+    public function having_in( string $column, $values, ?string $name = null ) {
         return $this->clause_in( "havings", $column, $values, $name );
     }
 
@@ -168,7 +184,7 @@ trait HavingClause {
      * @param ?string $name Optional name for the having.
      * @return static
      */
-    public function or_having_in( string $column, array $values, ?string $name = null ) {
+    public function or_having_in( string $column, $values, ?string $name = null ) {
         return $this->or_clause_in( "havings", $column, $values, $name );
     }
 
@@ -180,7 +196,7 @@ trait HavingClause {
      * @param ?string $name Optional name for the having.
      * @return static
      */
-    public function having_not_in( string $column, array $values, ?string $name = null ) {
+    public function having_not_in( string $column, $values, ?string $name = null ) {
         return $this->clause_not_in( "havings", $column, $values, $name );
     }
 
@@ -192,7 +208,7 @@ trait HavingClause {
      * @param ?string $name Optional name for the having.
      * @return static
      */
-    public function or_having_not_in( string $column, array $values, ?string $name = null ) {
+    public function or_having_not_in( string $column, $values, ?string $name = null ) {
         return $this->or_clause_not_in( "havings", $column, $values, $name );
     }
 

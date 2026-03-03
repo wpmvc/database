@@ -91,7 +91,7 @@ trait HasEvents {
         }
 
         // 2. Fire WordPress Hooks
-        $prefix     = App::$config->get( 'app.hook_prefix' ) ?: 'wpmvc';
+        $prefix     = App::get_config()->get( 'app.hook_prefix' ) ?: 'wpmvc';
         $table_name = static::get_table_name();
 
         $hook_name       = "{$prefix}_model_{$event}";

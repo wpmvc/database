@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         verbose="true">
+    <testsuites>
+        <testsuite name="Multisite">
+            <directory suffix="Test.php">./tests/Integration/Multisite</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <const name="WP_TESTS_MULTISITE" value="1"/>
+        <const name="WP_DEBUG" value="true"/>
+    </php>
+</phpunit>

@@ -34,7 +34,7 @@ class MultisiteModelTest extends TestCase {
         // 1. Setup in main blog
         Schema::create(
             'test_posts', function( Blueprint $table ) {
-                $table->big_increments( 'id' );
+                $table->big_increments( "id" );
                 $table->string( 'title' );
                 $table->timestamps();
             } 
@@ -42,7 +42,7 @@ class MultisiteModelTest extends TestCase {
         
         TestPost::create( ['title' => 'Main Blog Post'] );
         $this->assertEquals( 1, TestPost::count() );
-        $this->assertEquals( $wpdb->prefix . 'test_posts', ( new TestPost() )->get_table() );
+        $this->assertEquals( $wpdb->prefix . 'test_posts', ( new TestPost() )->get_table_full_name() );
 
         // 2. Switch to new blog
         $blog_id = $this->factory->blog->create();
@@ -54,7 +54,7 @@ class MultisiteModelTest extends TestCase {
         // 3. Setup in second blog
         Schema::create(
             'test_posts', function( Blueprint $table ) {
-                $table->big_increments( 'id' );
+                $table->big_increments( "id" );
                 $table->string( 'title' );
                 $table->timestamps();
             } 
@@ -62,7 +62,7 @@ class MultisiteModelTest extends TestCase {
         
         // Verify model sees the new table (should be empty)
         $this->assertEquals( 0, TestPost::count() );
-        $this->assertEquals( $wpdb->prefix . 'test_posts', ( new TestPost() )->get_table() );
+        $this->assertEquals( $wpdb->prefix . 'test_posts', ( new TestPost() )->get_table_full_name() );
         
         TestPost::create( ['title' => 'New Blog Post'] );
         $this->assertEquals( 1, TestPost::count() );
@@ -89,7 +89,7 @@ class MultisiteModelTest extends TestCase {
 
         Schema::create(
             'test_users', function( Blueprint $table ) {
-                $table->big_increments( 'id' );
+                $table->big_increments( "id" );
                 $table->string( 'user_login' );
                 $table->timestamps();
             } 
@@ -97,7 +97,7 @@ class MultisiteModelTest extends TestCase {
         
         Schema::create(
             'users', function( Blueprint $table ) {
-                $table->big_increments( 'id' );
+                $table->big_increments( "id" );
                 $table->string( 'user_login' );
                 $table->timestamps();
             } 
@@ -105,7 +105,7 @@ class MultisiteModelTest extends TestCase {
 
         Schema::create(
             'test_posts', function( Blueprint $table ) {
-                $table->big_increments( 'id' );
+                $table->big_increments( "id" );
                 $table->string( 'title' );
                 $table->big_integer( 'user_id' );
                 $table->timestamps();
@@ -127,14 +127,14 @@ class MultisiteModelTest extends TestCase {
         
         Schema::create(
             'test_users', function( Blueprint $table ) {
-                $table->big_increments( 'id' );
+                $table->big_increments( "id" );
                 $table->string( 'user_login' );
                 $table->timestamps();
             } 
         );
         Schema::create(
             'test_posts', function( Blueprint $table ) {
-                $table->big_increments( 'id' );
+                $table->big_increments( "id" );
                 $table->string( 'title' );
                 $table->big_integer( 'user_id' );
                 $table->timestamps();

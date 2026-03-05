@@ -11,7 +11,6 @@ namespace WpMVC\Database\Eloquent;
 
 defined( "ABSPATH" ) || exit;
 
-use Closure;
 use JsonSerializable;
 use WpMVC\Database\Query\Builder;
 use WpMVC\Database\Resolver;
@@ -66,6 +65,13 @@ abstract class Model implements JsonSerializable {
      * @var bool
      */
     public bool $exists = false;
+
+    /**
+     * The resolver instance.
+     *
+     * @var Resolver
+     */
+    protected Resolver $_resolver;
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -247,7 +253,7 @@ abstract class Model implements JsonSerializable {
      *
      * @return string
      */
-    public function get_table() {
+    public function get_table_full_name() {
         return $this->resolver()->table( static::get_table_name() );
     }
 
@@ -256,7 +262,13 @@ abstract class Model implements JsonSerializable {
      *
      * @return Resolver
      */
-    abstract public function resolver(): Resolver;
+    public function resolver(): Resolver {
+        if ( empty( $this->_resolver ) ) {
+            $this->_resolver = new Resolver();
+        }
+
+        return $this->_resolver;
+    }
 
     /**
      * Get the default foreign key name for the model.

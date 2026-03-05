@@ -3,7 +3,6 @@
 namespace WpMVC\Database\Tests\Framework\Models;
 
 use WpMVC\Database\Eloquent\Model;
-use WpMVC\Database\Resolver;
 
 class TestRole extends Model {
     protected string $table = 'test_roles';
@@ -12,10 +11,6 @@ class TestRole extends Model {
 
     public static function get_table_name(): string {
         return 'test_roles';
-    }
-
-    public function resolver(): Resolver {
-        return new Resolver();
     }
 
     public function users() {

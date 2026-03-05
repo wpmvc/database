@@ -3,7 +3,6 @@
 namespace WpMVC\Database\Tests\Framework\Models;
 
 use WpMVC\Database\Eloquent\Model;
-use WpMVC\Database\Resolver;
 
 class TestPost extends Model {
     protected string $table = 'test_posts';
@@ -12,10 +11,6 @@ class TestPost extends Model {
 
     public static function get_table_name(): string {
         return 'test_posts';
-    }
-
-    public function resolver(): Resolver {
-        return new Resolver();
     }
 
     public function user() {

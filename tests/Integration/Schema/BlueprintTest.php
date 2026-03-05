@@ -129,11 +129,11 @@ class BlueprintTest extends TestCase {
 
         $sql = $blueprint->to_alter_sql();
 
-        $this->assertStringContainsString( 'ALTER TABLE `PREFIX_TEST_TABLE`', strtoupper( $sql ) );
-        $this->assertStringContainsString( 'ADD `NEW_COL` VARCHAR(255) NOT NULL', strtoupper( $sql ) );
-        $this->assertStringContainsString( 'DROP COLUMN `OLD_COL`', strtoupper( $sql ) );
+        $this->assertStringContainsString( 'ALTER TABLE PREFIX_TEST_TABLE', strtoupper( $sql ) );
+        $this->assertStringContainsString( 'ADD NEW_COL VARCHAR(255) NOT NULL', strtoupper( $sql ) );
+        $this->assertStringContainsString( 'DROP COLUMN OLD_COL', strtoupper( $sql ) );
         $this->assertStringContainsString( 'ADD UNIQUE', strtoupper( $sql ) );
-        $this->assertStringContainsString( '(`NEW_COL`)', strtoupper( $sql ) );
+        $this->assertStringContainsString( '(NEW_COL)', strtoupper( $sql ) );
     }
 
     public function test_it_handles_boolean_defaults_correctly() {

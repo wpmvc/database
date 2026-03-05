@@ -28,7 +28,7 @@ class ForeignKeyTest extends TestCase {
         ); // return SQL
         
         $this->assertStringContainsString( 'CREATE TABLE', $sql );
-        $this->assertStringContainsString( 'USER_ID` BIGINT UNSIGNED', strtoupper( $sql ) );
+        $this->assertStringContainsString( 'USER_ID BIGINT UNSIGNED', strtoupper( $sql ) );
     }
 
     public function test_schema_identifies_foreign_keys() {
@@ -39,7 +39,7 @@ class ForeignKeyTest extends TestCase {
                 $table->big_increments( 'id' );
                 $table->unsigned_big_integer( 'author_id' );
                 $table->foreign( 'author_id' )->references( 'id' )->on( 'authors' );
-            
+
                 $captured_fks = $table->get_foreign_keys();
             }, true 
         );

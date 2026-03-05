@@ -49,7 +49,7 @@ class SchemaTest extends TestCase {
         );
 
         $this->assertColumnExists( $table_name, 'new_column' );
-        $this->assertHasIndex( $table_name, 'index_' . md5( '`new_column`' ) );
+        $this->assertHasIndex( $table_name, 'index_' . md5( 'new_column' ) );
 
         // Test drop column via alter
         Schema::alter(

@@ -96,10 +96,11 @@ class Schema {
 
         if ( $return ) return $sql;
 
-        // Use direct query instead of dbDelta for more reliable creation in tests
-        // and to bypass some of dbDelta's strict formatting requirements.
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        $wpdb->query( $sql );
+        if ( ! function_exists( 'dbDelta' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        }
+
+        dbDelta( $sql );
 
         self::apply_foreign_keys( $table_name, $blueprint->get_foreign_keys() );
     }

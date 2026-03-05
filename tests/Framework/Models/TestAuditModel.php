@@ -3,7 +3,6 @@
 namespace WpMVC\Database\Tests\Framework\Models;
 
 use WpMVC\Database\Eloquent\Model;
-use WpMVC\Database\Resolver;
 
 class TestAuditModel extends Model {
     protected array $fillable = ['name', 'email', 'bio'];
@@ -30,10 +29,6 @@ class TestAuditModel extends Model {
 
     public static function get_table_name(): string {
         return 'test_audit_models';
-    }
-
-    public function resolver(): Resolver {
-        return new Resolver();
     }
 
     // Mutator

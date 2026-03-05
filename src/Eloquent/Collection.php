@@ -478,6 +478,24 @@ class Collection implements ArrayAccess, Countable, IteratorAggregate, JsonSeria
     }
 
     /**
+     * Determine if the collection is empty or not.
+     *
+     * @return bool
+     */
+    public function is_empty() {
+        return empty( $this->items );
+    }
+
+    /**
+     * Determine if the collection is not empty.
+     *
+     * @return bool
+     */
+    public function is_not_empty() {
+        return ! $this->is_empty();
+    }
+
+    /**
      * Convert the object into something JSON serializable.
      *
      * @return array

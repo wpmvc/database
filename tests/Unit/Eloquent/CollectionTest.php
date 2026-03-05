@@ -59,9 +59,13 @@ class CollectionTest extends TestCase {
     public function test_it_can_check_if_empty() {
         $collection = new Collection( [] );
         $this->assertEquals( 0, $collection->count() );
+        $this->assertTrue( $collection->is_empty() );
+        $this->assertFalse( $collection->is_not_empty() );
         
         $collection = new Collection( [1] );
         $this->assertNotEquals( 0, $collection->count() );
+        $this->assertFalse( $collection->is_empty() );
+        $this->assertTrue( $collection->is_not_empty() );
     }
 
     public function test_it_can_get_first_item() {

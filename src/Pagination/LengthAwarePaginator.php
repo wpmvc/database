@@ -24,6 +24,21 @@ use WpMVC\Database\Eloquent\Collection;
  * Provides pagination functionality with total count awareness.
  *
  * @package WpMVC\Database\Pagination
+ *
+ * @method $this each(callable $callback)
+ * @method static map(callable $callback)
+ * @method static filter(callable $callback = null)
+ * @method Collection pluck(string|array $value, string|array|null $key = null)
+ * @method static where(string $key, mixed $operator = null, mixed $value = null)
+ * @method static unique(string|callable|null $key = null)
+ * @method Collection group_by(array|callable|string $group_by)
+ * @method static sort_by(callable|string $callback, int $options = SORT_REGULAR, bool $descending = false)
+ * @method mixed reduce(callable $callback, mixed $initial = null)
+ * @method bool contains(mixed $item)
+ * @method mixed first(callable|null $callback = null, mixed $default = null)
+ * @method mixed last(callable|null $callback = null, mixed $default = null)
+ * @method bool is_empty()
+ * @method bool is_not_empty()
  */
 class LengthAwarePaginator implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable {
     /**
@@ -202,5 +217,36 @@ class LengthAwarePaginator implements ArrayAccess, Countable, IteratorAggregate,
     #[\ReturnTypeWillChange]
     public function offsetUnset( $key ) {
         $this->items->offsetUnset( $key );
+    }
+
+    /**
+     * Set the items for the current page.
+     *
+     * @param  Collection|array  $items
+     * @return $this
+     */
+    public function set_items( $items ) {
+        $this->items = $items instanceof Collection ? $items : new Collection( $items );
+
+        return $this;
+    }
+
+    /**
+     * Handle dynamic calls into the collection.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function __call( $method, $parameters ) {
+        if ( in_array( $method, ['map', 'filter', 'where', 'unique', 'sort_by'], true ) ) {
+            return ( clone $this )->set_items( $this->items->$method( ...$parameters ) );
+        }
+
+        if ( 'each' === $method ) {
+            return $this->items->each( ...$parameters );
+        }
+
+        return $this->items->$method( ...$parameters );
     }
 }

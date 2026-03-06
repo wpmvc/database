@@ -33,7 +33,7 @@ class LengthAwarePaginatorTest extends TestCase {
         $array     = $paginator->to_array();
 
         $this->assertEquals( 2, $array['current_page'] );
-        $this->assertEquals( $items, $array['data'] );
+        $this->assertEquals( $items, $array['items'] );
         $this->assertEquals( 10, $array['total'] );
         $this->assertEquals( 2, $array['per_page'] );
         $this->assertEquals( 5, $array['last_page'] );

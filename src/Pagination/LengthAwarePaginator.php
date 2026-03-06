@@ -137,7 +137,7 @@ class LengthAwarePaginator implements ArrayAccess, Countable, IteratorAggregate,
     public function to_array() {
         return [
             'current_page' => $this->current_page(),
-            'data'         => $this->items->to_array(),
+            'items'        => $this->items->to_array(),
             'last_page'    => $this->last_page(),
             'per_page'     => $this->per_page(),
             'total'        => $this->total(),

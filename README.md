@@ -8,4 +8,4 @@
 
 A powerful SQL query builder tailored for WordPress plugins, offering a fluent and intuitive interface inspired by Laravel's Eloquent Query Builder. It simplifies database operations, relationships, and schema management for WordPress developers.
 
-For a full list of available commands and detailed usage guides, please refer to the [Database Documentation](https://wpmvc.com/docs/database/schema-builder).
+For a full list of available features and detailed usage guides, please refer to the [Database Documentation](https://wpmvc.com/docs/database/schema-builder).

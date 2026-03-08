@@ -366,6 +366,47 @@ class EnterpriseQueryTest extends TestCase {
         $this->assertNull( TestUser::query()->where( 'name', 'Morph Rollback' )->first() );
     }
 
+    public function test_transaction_rolls_back_when_third_query_is_invalid(): void {
+        global $wpdb;
+        try {
+            Builder::transaction(
+                function() use ( $wpdb ) {
+                    TestUser::create( ['name' => 'Valid User 1'] );
+                    TestUser::create( ['name' => 'Valid User 2'] );
+                    
+                    // Force an invalid query that will return false (due to missing column)
+                    // and manually throw an exception to trigger the rollback logic in Builder::transaction
+                    $suppress = $wpdb->suppress_errors( true );
+                    $success  = ( new Builder( new TestUser() ) )->from( 'test_users' )->insert( ['name' => 'Invalid User', 'invalid_column' => 'fail'] );
+                    $wpdb->suppress_errors( $suppress );
+                    
+                    if ( ! $success ) {
+                        throw new \RuntimeException( 'Query failed' );
+                    }
+                }
+            );
+        } catch ( \Exception $e ) {
+            // expected
+        }
+
+        $this->assertNull( TestUser::query()->where( 'name', 'Valid User 1' )->first() );
+        $this->assertNull( TestUser::query()->where( 'name', 'Valid User 2' )->first() );
+    }
+
+    public function test_transaction_commits_when_all_three_queries_are_valid(): void {
+        Builder::transaction(
+            function() {
+                TestUser::create( ['name' => 'Commit User 1'] );
+                TestUser::create( ['name' => 'Commit User 2'] );
+                TestUser::create( ['name' => 'Commit User 3'] );
+            }
+        );
+
+        $this->assertNotNull( TestUser::query()->where( 'name', 'Commit User 1' )->first() );
+        $this->assertNotNull( TestUser::query()->where( 'name', 'Commit User 2' )->first() );
+        $this->assertNotNull( TestUser::query()->where( 'name', 'Commit User 3' )->first() );
+    }
+
     // =========================================================================
     // Group 5: DISTINCT + count()
     // =========================================================================

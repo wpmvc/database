@@ -24,7 +24,7 @@ use WpMVC\Database\Query\Grammar;
 use WpMVC\Database\Query\JoinClause;
 use WpMVC\Database\Clauses\WhereClause;
 use WpMVC\Database\Clauses\HavingClause;
-use WpMVC\Database\Pagination\LengthAwarePaginator;
+use WpMVC\Database\Pagination\Paginator;
 use wpdb;
 use stdClass;
 use WpMVC\Database\Eloquent\Collection;
@@ -911,9 +911,9 @@ class Builder {
      * @param  int  $per_page
      * @param  int  $min_per_page
      * @param  int  $max_per_page
-     * @return LengthAwarePaginator
+     * @return Paginator
      */
-    public function pagination( int $current_page, int $per_page = 10, int $min_per_page = 10, int $max_per_page = 100 ) {
+    public function paginate( int $current_page, int $per_page = 10, int $min_per_page = 10, int $max_per_page = 100 ) {
         if ( $per_page > $max_per_page || $per_page < $min_per_page ) {
             $per_page = $max_per_page;
         }
@@ -931,7 +931,7 @@ class Builder {
         // Get the specific page rows
         $items = $this->limit( $per_page )->offset( $offset )->get();
 
-        return new LengthAwarePaginator( $items, $total, $per_page, $current_page );
+        return new Paginator( $items, $total, $per_page, $current_page );
     }
     
     /**
@@ -1358,10 +1358,6 @@ class Builder {
      */
     public function __call( $method, $parameters ) {
         if ( $this->model && method_exists( $this->model, $scope = 'scope_' . $method ) ) {
-            return $this->model->$scope( $this, ...$parameters ) ?: $this;
-        }
-
-        if ( $this->model && method_exists( $this->model, $scope = 'scope' . str_replace( ' ', '', ucwords( str_replace( '_', ' ', $method ) ) ) ) ) {
             return $this->model->$scope( $this, ...$parameters ) ?: $this;
         }
 

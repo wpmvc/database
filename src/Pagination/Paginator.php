@@ -1,6 +1,6 @@
 <?php
 /**
- * Length aware paginator class.
+ * Paginator class.
  *
  * @package WpMVC\Database
  * @author  WpMVC
@@ -19,9 +19,9 @@ use JsonSerializable;
 use WpMVC\Database\Eloquent\Collection;
 
 /**
- * Class LengthAwarePaginator
+ * Class Paginator
  *
- * Provides pagination functionality with total count awareness.
+ * Provides paginate functionality with total count awareness.
  *
  * @package WpMVC\Database\Pagination
  *
@@ -40,7 +40,7 @@ use WpMVC\Database\Eloquent\Collection;
  * @method bool is_empty()
  * @method bool is_not_empty()
  */
-class LengthAwarePaginator implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable {
+class Paginator implements ArrayAccess, Countable, IteratorAggregate, JsonSerializable {
     /**
      * The items for the current page.
      *
@@ -49,7 +49,7 @@ class LengthAwarePaginator implements ArrayAccess, Countable, IteratorAggregate,
     protected $items;
 
     /**
-     * The total number of items before pagination.
+     * The total number of items before paginate.
      *
      * @var int
      */
@@ -85,7 +85,7 @@ class LengthAwarePaginator implements ArrayAccess, Countable, IteratorAggregate,
     }
 
     /**
-     * Get the total number of items before pagination.
+     * Get the total number of items before paginate.
      *
      * @return int
      */

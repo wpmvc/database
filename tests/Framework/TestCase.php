@@ -19,12 +19,6 @@ abstract class TestCase extends WP_UnitTestCase {
      */
     public function tear_down() {
         Model::reguard();
-        Model::flush_observers();
-        
-        // Explicitly flush observers for models that might have been used in EventTests
-        \WpMVC\Database\Tests\Framework\Models\TestUser::flush_observers();
-        \WpMVC\Database\Tests\Framework\Models\TestPost::flush_observers();
-        \WpMVC\Database\Tests\Framework\Models\TestRole::flush_observers();
 
         // Clear hooks for test models specifically
         $test_models = ['test_users', 'test_posts', 'test_roles', 'test_profiles', 'test_images', 'test_tags', 'test_audit_models'];

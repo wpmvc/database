@@ -310,7 +310,7 @@ class AdvancedQueryTest extends TestCase {
     }
 
     /**
-     * Test limit and offset (pagination core).
+     * Test limit and offset (paginate core).
      */
     public function test_it_handles_limit_and_offset() {
         TestUser::create( ['name' => 'User 1'] );

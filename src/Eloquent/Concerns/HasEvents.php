@@ -16,18 +16,11 @@ use WpMVC\App;
 /**
  * Trait HasEvents
  *
- * Provides methods for managing model observers and events.
+ * Provides methods for managing model events.
  *
  * @package WpMVC\Database\Eloquent\Concerns
  */
 trait HasEvents {
-    /**
-     * The registered observers for the model.
-     *
-     * @var array
-     */
-    protected static array $observers = [];
-
     /**
      * Create a new model instance from existing database record.
      *
@@ -49,29 +42,6 @@ trait HasEvents {
     }
 
     /**
-     * Register an observer with the model.
-     *
-     * @param  object|string  $class
-     * @return void
-     */
-    public static function observe( $class ) {
-        $instance = is_string( $class ) ? new $class : $class;
-
-        static::$observers[static::class][] = $instance;
-    }
-
-    /**
-     * Clear all registered observers.
-     *
-     * @return void
-     */
-    public static function flush_observers() {
-        if ( isset( static::$observers[static::class] ) ) {
-            unset( static::$observers[static::class] );
-        }
-    }
-
-    /**
      * Fire a custom model event.
      *
      * @param  string  $event
@@ -79,18 +49,7 @@ trait HasEvents {
      * @return mixed
      */
     protected function fire_model_event( $event, $halt = true ) {
-        // 1. Fire Observer Methods
-        foreach ( static::$observers[static::class] ?? [] as $observer ) {
-            if ( method_exists( $observer, $event ) ) {
-                $result = $observer->$event( $this );
-
-                if ( $halt && $result === false ) {
-                    return false;
-                }
-            }
-        }
-
-        // 2. Fire WordPress Hooks
+        // Fire WordPress Hooks
         $prefix     = App::get_config()->get( 'app.hook_prefix' ) ?: 'wpmvc';
         $table_name = static::get_table_name();
 

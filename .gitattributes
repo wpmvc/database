@@ -7,4 +7,5 @@
 /.gitattributes export-ignore
 /phpunit.xml export-ignore
 /phpcs.xml export-ignore
+/phpunit-multisite.xml export-ignore
 /README.md export-ignore

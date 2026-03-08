@@ -1,9 +1,25 @@
 <?php
+/**
+ * Join On clause handling trait.
+ *
+ * @package WpMVC\Database
+ * @author  WpMVC
+ * @license MIT
+ */
 
 namespace WpMVC\Database\Clauses;
 
 defined( "ABSPATH" ) || exit;
 
+use Closure;
+
+/**
+ * Trait OnClause
+ *
+ * Provides methods for adding JOIN ON clauses to the join builder.
+ *
+ * @package WpMVC\Database\Clauses
+ */
 trait OnClause {
     use Clause;
 
@@ -27,29 +43,35 @@ trait OnClause {
     }
 
     /**
-     * Add a basic on to the query.
+     * Add a basic "on" clause to the join.
      *
-     * @param (Closure(static): mixed)|static|string $column The column to compare.
-     * @param mixed $operator The operator for comparison.
-     * @param mixed $value The value to compare.
-     * @param ?string $name Optional name for the on.
+     * In WpMVC (Laravel parity), on() defaults to comparing two columns.
+     * If you need to compare a column to a value, use where() on the JoinClause.
+     *
+     * @param string|Closure $first
+     * @param string|null $operator
+     * @param string|null $second
+     * @param string $boolean
      * @return static
      */
-    public function on( $column, $operator = null, $value = null, ?string $name = null ) {
-        return $this->clause( "ons", $column, $operator, $value, $name );
+    public function on( $first, $operator = null, $second = null, $boolean = 'and' ) {
+        if ( $first instanceof Closure ) {
+            return $this->clause( "ons", $first, $operator, $second, null, $boolean );
+        }
+
+        return $this->on_column( $first, $operator, $second, $boolean );
     }
 
     /**
-     * Add an "or on" to the query.
+     * Add an "or on" clause to the join.
      *
-     * @param (Closure(static): mixed)|static|string $column The column to compare.
-     * @param mixed $operator The operator for comparison.
-     * @param mixed $value The value to compare.
-     * @param ?string $name Optional name for the on.
+     * @param string|Closure $first
+     * @param string|null $operator
+     * @param string|null $second
      * @return static
      */
-    public function or_on( string $column, $operator = null, $value = null, ?string $name = null ) {
-        return $this->or_clause( "ons", $column, $operator, $value, $name );
+    public function or_on( $first, $operator = null, $second = null ) {
+        return $this->on( $first, $operator, $second, 'or' );
     }
 
     /**
@@ -87,8 +109,8 @@ trait OnClause {
      * @param ?string $name Optional name for the on.
      * @return static
      */
-    public function on_column( string $first_column, $operator = null, $second_column = null, ?string $name = null ) {
-        return $this->clause_column( "ons", $first_column, $operator, $second_column, $name );
+    public function on_column( string $first_column, $operator = null, $second_column = null, $boolean = 'and' ) {
+        return $this->clause_column( "ons", $first_column, $operator, $second_column, null, $boolean );
     }
 
     /**
@@ -100,8 +122,8 @@ trait OnClause {
      * @param ?string $name Optional name for the on.
      * @return static
      */
-    public function or_on_column( string $first_column, $operator = null, $second_column = null, ?string $name = null ) {
-        return $this->or_clause_column( "ons", $first_column, $operator, $second_column, $name );
+    public function or_on_column( string $first_column, $operator = null, $second_column = null ) {
+        return $this->on_column( $first_column, $operator, $second_column, 'or' );
     }
 
     /**

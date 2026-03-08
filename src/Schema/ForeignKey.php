@@ -1,9 +1,25 @@
 <?php
+/**
+ * Foreign key definition class.
+ *
+ * @package WpMVC\Database
+ * @author  WpMVC
+ * @license MIT
+ */
 
 namespace WpMVC\Database\Schema;
 
 defined( "ABSPATH" ) || exit;
 
+use WpMVC\Database\Resolver;
+
+/**
+ * Class ForeignKey
+ *
+ * Handles defining foreign key constraints in schema blueprints.
+ *
+ * @package WpMVC\Database\Schema
+ */
 class ForeignKey {
     /**
      * The column in the current table that is the foreign key.
@@ -67,8 +83,7 @@ class ForeignKey {
      * @return self
      */
     public function on( string $reference_table ): self {
-        global $wpdb;
-        $this->reference_table =  $wpdb->prefix . $reference_table;
+        $this->reference_table = ( new Resolver() )->table( $reference_table );
         return $this;
     }
 

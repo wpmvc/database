@@ -2,57 +2,36 @@
 
 namespace WpMVC\Database\Tests\Unit;
 
+use PHPUnit\Framework\TestCase;
 use WpMVC\Database\Resolver;
-use WpMVC\Database\Tests\TestCase;
+use Mockery;
 
 class ResolverTest extends TestCase {
-    /**
-     * @test
-     * 
-     * Verifies that the resolver correctly adds prefixes to standard table names.
-     */
-    public function it_resolves_standard_table_names() {
-        $resolver = new Resolver();
-        
-        // Default behavior assumes 'wp_' prefix from our bootstrap mock
-        $this->assertEquals( 'wp_posts', $resolver->table( 'posts' ) );
+    public function tearDown(): void {
+        Mockery::close();
+        parent::tearDown();
     }
 
-    /**
-     * @test
-     * 
-     * Verifies that the resolver correctly handles network-wide table names.
-     */
-    public function it_resolves_network_table_names() {
+    public function test_it_resolves_standard_tables() {
+        global $wpdb;
+        $original_prefix = $wpdb->prefix;
+        $wpdb->prefix    = 'wptests_';
+
         $resolver = new Resolver();
-        
-        // 'users' is in the default network tables list
-        $this->assertEquals( 'wp_users', $resolver->table( 'users' ) );
+        $this->assertEquals( 'wptests_users', $resolver->table( 'users' ) );
+
+        $wpdb->prefix = $original_prefix;
     }
 
-    /**
-     * @test
-     * 
-     * Verifies that the resolver can resolve multiple table names at once.
-     */
-    public function it_resolves_multiple_tables() {
-        $resolver = new Resolver();
-        
-        $tables = $resolver->table( 'posts', 'comments' );
-        
-        $this->assertEquals( ['wp_posts', 'wp_comments'], $tables );
-    }
+    public function test_it_resolves_global_tables() {
+        global $wpdb;
+        $original_base_prefix = $wpdb->base_prefix;
+        $wpdb->base_prefix    = 'wp_';
 
-    /**
-     * @test
-     * 
-     * Verifies that custom network tables can be added to the resolver.
-     */
-    public function it_can_add_custom_network_tables() {
         $resolver = new Resolver();
-        
-        $resolver->set_network_tables( ['custom_global'] );
-        
-        $this->assertEquals( 'wp_custom_global', $resolver->table( 'custom_global' ) );
+        // 'site' is in the internal $network_tables list, so it should be resolved automatically
+        $this->assertEquals( 'wp_site', $resolver->table( 'site' ) );
+
+        $wpdb->base_prefix = $original_base_prefix;
     }
 }

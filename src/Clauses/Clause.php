@@ -1,4 +1,11 @@
 <?php
+/**
+ * Common clause handling trait.
+ *
+ * @package WpMVC\Database
+ * @author  WpMVC
+ * @license MIT
+ */
 
 namespace WpMVC\Database\Clauses;
 
@@ -6,9 +13,21 @@ defined( "ABSPATH" ) || exit;
 
 use Closure;
 
+/**
+ * Trait Clause
+ *
+ * Provides shared functionality for managing query clauses (WHERE, HAVING, JOIN ON).
+ *
+ * @package WpMVC\Database\Clauses
+ */
 trait Clause {
     protected array $clauses = [];
 
+    /**
+     * Get all clauses.
+     *
+     * @return array
+     */
     public function get_clauses() {
         return $this->clauses;
     }
@@ -237,7 +256,7 @@ trait Clause {
      * @param bool $not Whether to negate the in clause.
      * @return static
      */
-    protected function clause_in( string $clause_type, string $column, array $values, ?string $name = null, $boolean = 'and', $not = false ) {
+    protected function clause_in( string $clause_type, string $column, $values, ?string $name = null, $boolean = 'and', $not = false ) {
         $type = 'in'; // Define the type of the clause
         $data = compact( 'type', 'boolean', 'column', 'values', 'not' );
 
